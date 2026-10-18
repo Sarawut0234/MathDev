@@ -354,10 +354,13 @@
         <div class="practice-body" id="practice-body" hidden>
         <div class="practice-player">
           <span class="player-name"><span class="player-name-text" id="practice-player-name">ผู้ฝึก</span></span>
-          <button class="ghost-button player-change" id="practice-change-name" type="button">เปลี่ยนชื่อ</button>
+          <span class="player-actions">
+            <button class="ghost-button player-change" id="practice-settings" type="button" hidden>ตั้งค่าใหม่</button>
+            <button class="ghost-button player-change" id="practice-change-name" type="button">เปลี่ยนชื่อ</button>
+          </span>
         </div>
 
-        <div class="practice-setup">
+        <div class="practice-setup" id="practice-setup" hidden>
           <fieldset class="practice-group">
             <legend>ประเภทโจทย์</legend>
             <div class="practice-options" id="practice-types">

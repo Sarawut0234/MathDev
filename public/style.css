@@ -698,6 +698,13 @@ p {
   background: #fcfcfe;
 }
 
+.player-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
 .player-name {
   display: flex;
   min-width: 0;

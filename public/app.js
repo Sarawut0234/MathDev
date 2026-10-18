@@ -473,6 +473,8 @@ const practiceNameInput = document.querySelector("#practice-name");
 const practiceNameError = document.querySelector("#practice-name-error");
 const practicePlayerName = document.querySelector("#practice-player-name");
 const practiceChangeName = document.querySelector("#practice-change-name");
+const practiceSettings = document.querySelector("#practice-settings");
+const practiceSetup = document.querySelector("#practice-setup");
 const practiceNextButton = document.querySelector("#practice-next");
 const practiceTimer = document.querySelector("#practice-timer");
 const practiceTimerValue = document.querySelector("#practice-timer-value");
@@ -806,9 +808,32 @@ function startSet() {
   practiceState.entryId = "";
   practiceSummary.hidden = true;
   practiceProgress.hidden = false;
+  practiceSetup.hidden = true;
+  practiceSettings.hidden = false;
   updateScoreboard();
   renderSetProgress();
   newPracticeQuestion();
+}
+
+function showSetup() {
+  stopTimer();
+  practiceState.question = null;
+  practiceState.finished = true;
+  practiceSetup.hidden = false;
+  practiceSettings.hidden = true;
+  practiceSummary.hidden = true;
+  practiceProgress.hidden = true;
+  practiceTimer.hidden = true;
+  practiceNextButton.hidden = true;
+  practiceSkipButton.hidden = true;
+  practiceStepsCard.hidden = true;
+  practiceFeedback.hidden = true;
+  practiceAnswer.value = "";
+  practiceQuestion.textContent = "เลือกประเภทโจทย์แล้วกดสุ่มโจทย์ 10 ข้อ";
+  practiceHint.textContent = "";
+  practiceDetail.innerHTML = "";
+  practiceTag.textContent = "พร้อมฝึก";
+  practiceCount.textContent = `0 / ${SET_SIZE}`;
 }
 
 function finishSet() {
@@ -1095,7 +1120,7 @@ function startPractice(name) {
   practicePlayerName.textContent = name;
   practiceGate.hidden = true;
   practiceBody.hidden = false;
-  startSet();
+  showSetup();
 }
 
 practiceNameForm.addEventListener("submit", (event) => {
@@ -1135,15 +1160,26 @@ practiceSkipButton.addEventListener("click", skipQuestion);
 practiceNextButton.addEventListener("click", advanceSet);
 summaryAgain.addEventListener("click", startSet);
 summaryLeaderboard.addEventListener("click", () => activateTab("leaderboard"));
+practiceSettings.addEventListener("click", showSetup);
 
 practiceResetButton.addEventListener("click", startSet);
 
 document.querySelectorAll('input[name="practice-type"]').forEach((input) => {
-  input.addEventListener("change", startSet);
+  input.addEventListener("change", () => {
+    if (practiceSetup.hidden) return;
+    practiceNewButton.focus();
+  });
 });
 
-practiceBaseSelect.addEventListener("change", startSet);
-practiceLevelSelect.addEventListener("change", startSet);
+practiceBaseSelect.addEventListener("change", () => {
+  if (practiceSetup.hidden) return;
+  practiceNewButton.focus();
+});
+
+practiceLevelSelect.addEventListener("change", () => {
+  if (practiceSetup.hidden) return;
+  practiceNewButton.focus();
+});
 
 document.querySelector("#footer-year").textContent = new Date().getFullYear();
 tryConvert();
