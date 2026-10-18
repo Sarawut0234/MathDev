@@ -49,6 +49,10 @@ button {
   gap: 16px;
 }
 
+.panels > [data-panel] {
+  min-width: 0;
+}
+
 .panels > [hidden] {
   display: none;
 }
@@ -1932,7 +1936,7 @@ p {
     flex: 1;
     min-width: 0;
     justify-content: center;
-    padding: 9px 8px;
+    padding: 9px 4px;
     font-size: 11px;
   }
 
@@ -2231,5 +2235,382 @@ p {
 
   .calc-operand-row > .field-group:nth-child(3) {
     grid-area: b;
+  }
+}
+
+/* ---------- แท็บสไลด์ ---------- */
+
+.slides-chapters {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+  min-width: 0;
+}
+
+.slides-chapter {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid #e9eaf1;
+  border-radius: 11px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+.slides-chapter:hover {
+  border-color: #c9c4fb;
+}
+
+.slides-chapter.is-active {
+  border-color: #b9b2f7;
+  background: #faf9ff;
+}
+
+.slides-chapter-label {
+  color: var(--purple);
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.slides-chapter-title {
+  overflow: hidden;
+  color: var(--ink);
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slides-chapter-count {
+  color: #9a9eac;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 9px;
+}
+
+.slides-stage {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 38px;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.slides-nav {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid #e9eaf1;
+  border-radius: 50%;
+  background: #fff;
+  color: #6b7086;
+  cursor: pointer;
+  transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+}
+
+.slides-nav svg {
+  width: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.slides-nav:hover:not(:disabled) {
+  border-color: #b9b2f7;
+  background: #faf9ff;
+  color: var(--purple);
+}
+
+.slides-nav:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.slides-frame {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #e9eaf1;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.slides-frame img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  background: #fff;
+}
+
+.slides-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+  padding: 9px 12px;
+  border-top: 1px solid #f0f1f6;
+  background: #fcfcfe;
+}
+
+.slides-caption-title {
+  overflow: hidden;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slides-caption-meta {
+  flex: 0 0 auto;
+  color: #9a9eac;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 9px;
+}
+
+.slides-progress {
+  margin-top: 14px;
+}
+
+.slides-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 7px;
+  color: #6b7086;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 10px;
+}
+
+.slides-progress-hint {
+  color: #a3a7b5;
+  font-size: 9px;
+}
+
+.slides-progress-track {
+  overflow: hidden;
+  height: 5px;
+  border-radius: 999px;
+  background: #eef0f6;
+}
+
+.slides-progress-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--purple);
+  transition: width 180ms ease;
+}
+
+.slides-thumbs {
+  display: flex;
+  gap: 7px;
+  min-width: 0;
+  margin-top: 14px;
+  padding-bottom: 6px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.slides-thumb {
+  position: relative;
+  flex: 0 0 auto;
+  width: 74px;
+  padding: 0;
+  overflow: hidden;
+  border: 1.5px solid #e9eaf1;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 150ms ease;
+}
+
+.slides-thumb img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.slides-thumb span {
+  display: block;
+  padding: 2px 0 3px;
+  color: #9a9eac;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 9px;
+}
+
+.slides-thumb.is-active {
+  border-color: var(--purple);
+}
+
+.slides-thumb.is-active span {
+  color: var(--purple);
+  font-weight: 600;
+}
+
+.slides-note {
+  margin-top: 14px;
+  padding: 11px 13px;
+  border: 1px dashed #dcd8fb;
+  border-radius: 10px;
+  background: #fbfaff;
+  color: #6b7086;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--purple);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+/* ---------- โจทย์จากสไลด์ ---------- */
+
+.practice-options--groups {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.practice-filters--single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.detail-row {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+}
+
+.detail-value {
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.mini-table,
+.kmap-table {
+  border-collapse: collapse;
+  font-family: "Inter", monospace;
+  font-size: 11px;
+}
+
+.mini-table th,
+.mini-table td,
+.kmap-table th,
+.kmap-table td {
+  min-width: 30px;
+  padding: 3px 7px;
+  border: 1px solid #e2e4ee;
+  text-align: center;
+}
+
+.mini-table th,
+.kmap-table th {
+  background: #f6f6fb;
+  color: #6b7086;
+  font-weight: 600;
+}
+
+.kmap-table td {
+  position: relative;
+  padding: 5px 8px 12px;
+}
+
+.kmap-table .kmap-value {
+  display: block;
+  font-weight: 600;
+}
+
+.kmap-table .kmap-index {
+  position: absolute;
+  right: 3px;
+  bottom: 1px;
+  color: #b3b7c4;
+  font-size: 8px;
+}
+
+.kmap-table td.is-one {
+  background: #f1efff;
+  color: var(--purple-dark);
+}
+
+.kmap-table td.is-highlight {
+  background: #e3dfff;
+  outline: 2px solid var(--purple);
+  outline-offset: -2px;
+}
+
+.kmap-corner {
+  font-size: 9px;
+}
+
+@media (max-width: 640px) {
+  .slides-chapters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .slides-chapter {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .slides-chapter-title {
+    white-space: normal;
+  }
+
+  .slides-stage {
+    grid-template-columns: 32px minmax(0, 1fr) 32px;
+    gap: 6px;
+  }
+
+  .slides-nav {
+    width: 32px;
+    height: 32px;
+  }
+
+  .slides-caption {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .slides-progress-hint {
+    display: none;
+  }
+
+  .slides-thumb {
+    width: 62px;
+  }
+
+  .practice-options--groups {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .detail-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
   }
 }

@@ -446,6 +446,134 @@ calcCopyButton.addEventListener("click", async () => {
   }
 });
 
+/* ---------- แท็บสไลด์: เลือกบท ดูสไลด์ และเลื่อนหน้า ---------- */
+
+const slidesChapters = document.querySelector("#slides-chapters");
+const slidesImage = document.querySelector("#slides-image");
+const slidesTitle = document.querySelector("#slides-title");
+const slidesMeta = document.querySelector("#slides-meta");
+const slidesPrev = document.querySelector("#slides-prev");
+const slidesNext = document.querySelector("#slides-next");
+const slidesPosition = document.querySelector("#slides-position");
+const slidesLength = document.querySelector("#slides-length");
+const slidesProgressFill = document.querySelector("#slides-progress-fill");
+const slidesProgressTrack = document.querySelector(".slides-progress-track");
+const slidesThumbs = document.querySelector("#slides-thumbs");
+const slidesTotal = document.querySelector("#slides-total");
+const slidesToPractice = document.querySelector("#slides-to-practice");
+
+const slidesState = { chapter: 0, index: 0 };
+
+function currentSlideChapter() {
+  return SLIDE_CHAPTERS[slidesState.chapter];
+}
+
+function slideImagePath(chapterId, number) {
+  return `/slides/${chapterId}/slide-${String(number).padStart(2, "0")}.jpg`;
+}
+
+function renderSlideChapters() {
+  slidesChapters.innerHTML = SLIDE_CHAPTERS.map((chapter, index) => `
+    <button class="slides-chapter" type="button" role="tab"
+      aria-selected="${index === slidesState.chapter}"
+      data-chapter="${index}"
+      class="${index === slidesState.chapter ? "is-active" : ""}">
+      <span class="slides-chapter-label">${chapter.label}</span>
+      <span class="slides-chapter-title">${chapter.title}</span>
+      <span class="slides-chapter-count">${chapter.count} สไลด์</span>
+    </button>
+  `).join("");
+
+  slidesChapters.querySelectorAll(".slides-chapter").forEach((button) => {
+    button.addEventListener("click", () => {
+      slidesState.chapter = Number(button.dataset.chapter);
+      slidesState.index = 0;
+      renderSlideChapters();
+      renderSlideThumbs();
+      renderSlide();
+    });
+  });
+}
+
+function renderSlideThumbs() {
+  const chapter = currentSlideChapter();
+  slidesThumbs.innerHTML = chapter.slides.map((slide, index) => `
+    <button class="slides-thumb ${index === slidesState.index ? "is-active" : ""}" type="button"
+      data-index="${index}" title="${slide.t}" aria-label="สไลด์ที่ ${slide.n}: ${slide.t}">
+      <img src="${slideImagePath(chapter.id, slide.n)}" alt="" loading="lazy" />
+      <span>${slide.n}</span>
+    </button>
+  `).join("");
+
+  slidesThumbs.querySelectorAll(".slides-thumb").forEach((button) => {
+    button.addEventListener("click", () => {
+      slidesState.index = Number(button.dataset.index);
+      renderSlide();
+    });
+  });
+}
+
+function renderSlide() {
+  const chapter = currentSlideChapter();
+  const slide = chapter.slides[slidesState.index];
+  const total = chapter.slides.length;
+
+  slidesImage.src = slideImagePath(chapter.id, slide.n);
+  slidesImage.alt = `${chapter.label} ${chapter.title} สไลด์ที่ ${slide.n}: ${slide.t}`;
+  slidesTitle.textContent = slide.t;
+  slidesMeta.textContent = `${chapter.label} · ${chapter.title} · สไลด์ ${slide.n}/${total}`;
+  slidesPosition.textContent = String(slide.n);
+  slidesLength.textContent = String(total);
+  slidesProgressFill.style.width = `${((slidesState.index + 1) / total) * 100}%`;
+  slidesProgressTrack.setAttribute("aria-valuemax", String(total));
+  slidesProgressTrack.setAttribute("aria-valuenow", String(slide.n));
+  slidesPrev.disabled = slidesState.index === 0;
+  slidesNext.disabled = slidesState.index === total - 1;
+
+  slidesThumbs.querySelectorAll(".slides-thumb").forEach((button, index) => {
+    const isActive = index === slidesState.index;
+    button.classList.toggle("is-active", isActive);
+    if (isActive) button.scrollIntoView({ block: "nearest", inline: "center" });
+  });
+}
+
+function stepSlide(delta) {
+  const chapter = currentSlideChapter();
+  const next = slidesState.index + delta;
+  if (next < 0 || next >= chapter.slides.length) return;
+  slidesState.index = next;
+  renderSlide();
+}
+
+slidesPrev.addEventListener("click", () => stepSlide(-1));
+slidesNext.addEventListener("click", () => stepSlide(1));
+
+slidesToPractice.addEventListener("click", () => {
+  activateTab("practice");
+  const group = document.querySelector('input[name="practice-group"][value="all"]');
+  if (group) {
+    group.checked = true;
+    syncPracticeGroups();
+  }
+});
+
+document.addEventListener("keydown", (event) => {
+  if (document.querySelector("#panel-slides").hidden) return;
+  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement) return;
+  if (event.key === "ArrowLeft") {
+    event.preventDefault();
+    stepSlide(-1);
+  } else if (event.key === "ArrowRight") {
+    event.preventDefault();
+    stepSlide(1);
+  }
+});
+
+slidesTotal.textContent = String(SLIDE_CHAPTERS.reduce((sum, chapter) => sum + chapter.count, 0));
+renderSlideChapters();
+renderSlideThumbs();
+renderSlide();
+
 const practiceForm = document.querySelector("#practice-form");
 const practiceAnswer = document.querySelector("#practice-answer");
 const practiceError = document.querySelector("#practice-error");
@@ -460,6 +588,12 @@ const practiceSkipButton = document.querySelector("#practice-skip");
 const practiceResetButton = document.querySelector("#practice-reset");
 const practiceBaseSelect = document.querySelector("#practice-base");
 const practiceLevelSelect = document.querySelector("#practice-level");
+const practiceLevelSlidesSelect = document.querySelector("#practice-level-slides");
+const practiceBaseGroup = document.querySelector("#practice-base-group");
+const practiceLogicGroup = document.querySelector("#practice-logic-group");
+const practiceKmapGroup = document.querySelector("#practice-kmap-group");
+const practiceBaseFilters = document.querySelector("#practice-base-filters");
+const practiceSlideFilters = document.querySelector("#practice-slide-filters");
 const practiceStepsSubtitle = document.querySelector("#practice-steps-subtitle");
 const practiceStepsContent = document.querySelector("#practice-steps-content");
 const practiceStepsCard = document.querySelector("#practice-steps-card");
@@ -503,6 +637,14 @@ const practiceTypeNames = {
   subtract: "ลบ",
   multiply: "คูณ",
   divide: "หาร",
+  complement: "คอมพลีเมนต์",
+  gate: "ลอจิกเกต",
+  truth: "ตารางความจริง",
+  demorgan: "De Morgan",
+  minterm: "Minterm",
+  group: "จัดกลุ่ม K-map",
+  simplify: "ลดรูป K-map",
+  cell: "อ่านช่อง K-map",
 };
 
 const practiceLevels = {
@@ -579,9 +721,303 @@ function randomDigits(base, length) {
   return digits.join("");
 }
 
+/* ---------- ตัวช่วยสร้างโจทย์จากเนื้อหาในสไลด์ (บทที่ 1–3) ---------- */
+
+function detailBlock(label, value) {
+  return `<div class="detail-row"><span class="detail-label">${label}</span><div class="detail-value">${value}</div></div>`;
+}
+
+function addOneBinary(bits) {
+  const characters = bits.split("");
+  let carry = 1;
+  for (let index = characters.length - 1; index >= 0 && carry === 1; index -= 1) {
+    if (characters[index] === "0") {
+      characters[index] = "1";
+      carry = 0;
+    } else {
+      characters[index] = "0";
+    }
+  }
+  return characters.join("");
+}
+
+const logicGates = {
+  AND: { rule: "เอาต์พุตเป็น 1 เมื่ออินพุตทุกตัวเป็น 1", ones: 1 },
+  OR: { rule: "เอาต์พุตเป็น 0 เมื่ออินพุตทุกตัวเป็น 0", ones: 3 },
+  NAND: { rule: "นิเสธของ AND — เอาต์พุตเป็น 0 เมื่ออินพุตทุกตัวเป็น 1", ones: 3 },
+  NOR: { rule: "นิเสธของ OR — เอาต์พุตเป็น 1 เมื่ออินพุตทุกตัวเป็น 0", ones: 1 },
+  XOR: { rule: "เอาต์พุตเป็น 1 เมื่ออินพุตทั้งสองต่างกัน", ones: 2 },
+  XNOR: { rule: "เอาต์พุตเป็น 1 เมื่ออินพุตทั้งสองเหมือนกัน", ones: 2 },
+};
+
+function evalGate(gate, x, y) {
+  switch (gate) {
+    case "AND": return x & y;
+    case "OR": return x | y;
+    case "NAND": return (x & y) === 1 ? 0 : 1;
+    case "NOR": return (x | y) === 1 ? 0 : 1;
+    case "XOR": return x ^ y;
+    default: return (x ^ y) === 1 ? 0 : 1;
+  }
+}
+
+function gateTruthTable(gate) {
+  return [[0, 0], [0, 1], [1, 0], [1, 1]].map(([x, y]) => [x, y, evalGate(gate, x, y)]);
+}
+
+function truthTableHtml(gate) {
+  const rows = gateTruthTable(gate)
+    .map(([x, y, z]) => `<tr><td>${x}</td><td>${y}</td><td>${z}</td></tr>`)
+    .join("");
+  return `<table class="mini-table"><thead><tr><th>X</th><th>Y</th><th>Z</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function kmapLayout(variableCount) {
+  if (variableCount === 2) {
+    return { rows: ["0", "1"], cols: ["0", "1"], rowVars: "A", colVars: "B" };
+  }
+  if (variableCount === 3) {
+    return { rows: ["0", "1"], cols: ["00", "01", "11", "10"], rowVars: "A", colVars: "BC" };
+  }
+  return { rows: ["00", "01", "11", "10"], cols: ["00", "01", "11", "10"], rowVars: "AB", colVars: "CD" };
+}
+
+function kmapHtml(variableCount, ones, highlight) {
+  const layout = kmapLayout(variableCount);
+  const head = layout.cols.map((column) => `<th>${column}</th>`).join("");
+  const body = layout.rows
+    .map((row) => {
+      const cells = layout.cols
+        .map((column) => {
+          const minterm = parseInt(row + column, 2);
+          const isOne = ones.includes(minterm);
+          const classes = [isOne ? "is-one" : "", minterm === highlight ? "is-highlight" : ""]
+            .filter(Boolean)
+            .join(" ");
+          return `<td class="${classes}"><span class="kmap-value">${isOne ? 1 : 0}</span><span class="kmap-index">${minterm}</span></td>`;
+        })
+        .join("");
+      return `<tr><th>${row}</th>${cells}</tr>`;
+    })
+    .join("");
+  return `<table class="kmap-table"><thead><tr><th class="kmap-corner">${layout.rowVars}\\${layout.colVars}</th>${head}</tr></thead><tbody>${body}</tbody></table>`;
+}
+
+function mintermsForFixed(variableCount, variableIndex, value) {
+  const list = [];
+  for (let minterm = 0; minterm < 2 ** variableCount; minterm += 1) {
+    const bits = minterm.toString(2).padStart(variableCount, "0");
+    if (Number(bits[variableIndex]) === value) list.push(minterm);
+  }
+  return list;
+}
+
+function slideLevelCount(level) {
+  return level === "easy" ? 2 : level === "medium" ? 3 : 4;
+}
+
+function buildComplementQuestion(level) {
+  const bits = level === "hard" ? 8 : 4;
+  const digits = randomDigits(2, bits);
+  const kind = Math.random() < 0.5 ? "1" : "2";
+  const onesComplement = digits.split("").map((digit) => (digit === "0" ? "1" : "0")).join("");
+  const twosComplement = addOneBinary(onesComplement);
+  const answer = kind === "1" ? onesComplement : twosComplement;
+
+  return {
+    type: "complement",
+    answer,
+    answerBase: 2,
+    prompt: `จงหา <strong>${kind}’s complement</strong> ของ <span class="mono">${digits}</span> (${bits} บิต)`,
+    hint: `ตอบเป็นเลขฐานสอง ${bits} บิต`,
+    detail: detailBlock("ดูสไลด์", "บทที่ 1 · Complements of Numbers (1’s และ 2’s complement)"),
+    steps: `<p>1. 1’s complement คือการกลับบิตทุกตัว (เปลี่ยน 0 เป็น 1, เปลี่ยน 1 เป็น 0)</p>
+      <p class="formula">${digits} → ${onesComplement}</p>
+      <p>2. 2’s complement = 1’s complement แล้วบวก 1</p>
+      <p class="formula">${onesComplement} + 1 = ${twosComplement}</p>
+      <p>3. คำตอบคือ <strong>${answer}</strong></p>`,
+    stepsSubtitle: `หา ${kind}’s complement ของเลขฐานสอง ${bits} บิต`,
+  };
+}
+
+function buildGateQuestion() {
+  const names = Object.keys(logicGates);
+  const gate = names[randomInt(0, names.length - 1)];
+  const x = randomInt(0, 1);
+  const y = randomInt(0, 1);
+  const z = evalGate(gate, x, y);
+
+  return {
+    type: "gate",
+    answer: String(z),
+    answerBase: 10,
+    prompt: `เกต <strong>${gate}</strong> มีอินพุต X = ${x}, Y = ${y} จงหาค่าเอาต์พุต Z`,
+    hint: "ตอบเป็น 0 หรือ 1",
+    detail: detailBlock("ตารางความจริงของเกตนี้", truthTableHtml(gate))
+      + detailBlock("ดูสไลด์", `บทที่ 2 · ${gate} Gate`),
+    steps: `<p>1. เกต ${gate}: ${logicGates[gate].rule}</p>
+      <p>2. แทนค่า X = ${x}, Y = ${y} ลงในตารางความจริง</p>
+      <p class="formula">Z = ${z}</p>
+      <p>3. คำตอบคือ <strong>${z}</strong></p>`,
+    stepsSubtitle: `หาค่าเอาต์พุตของเกต ${gate}`,
+  };
+}
+
+function buildTruthQuestion() {
+  const names = Object.keys(logicGates);
+  const gate = names[randomInt(0, names.length - 1)];
+  const ones = logicGates[gate].ones;
+
+  return {
+    type: "truth",
+    answer: String(ones),
+    answerBase: 10,
+    prompt: `ตารางความจริงของเกต <strong>${gate}</strong> (อินพุต 2 ตัว) มีกี่แถวที่เอาต์พุต Z = 1`,
+    hint: "ตารางความจริงของอินพุต 2 ตัวมีทั้งหมด 4 แถว",
+    detail: detailBlock("ตารางความจริง", truthTableHtml(gate))
+      + detailBlock("ดูสไลด์", `บทที่ 2 · ${gate} Gate`),
+    steps: `<p>1. เขียนตารางความจริงของเกต ${gate} ทั้ง 4 แถว</p>
+      <p class="formula">${gateTruthTable(gate).map(([x, y, z]) => `X=${x} Y=${y} → Z=${z}`).join("<br />")}</p>
+      <p>2. นับแถวที่ Z = 1 ได้ <strong>${ones}</strong> แถว</p>`,
+    stepsSubtitle: `นับแถวที่เอาต์พุตเป็น 1 ของเกต ${gate}`,
+  };
+}
+
+function buildDemorganQuestion() {
+  const useAnd = Math.random() < 0.5;
+  const inner = useAnd ? "X &amp; Y" : "X | Y";
+  const answer = useAnd ? "|" : "&";
+  const result = useAnd ? "~X | ~Y" : "~X &amp; ~Y";
+
+  return {
+    type: "demorgan",
+    answer,
+    answerAliases: useAnd ? ["|", "or", "+", "OR"] : ["&", "and", "AND"],
+    prompt: `ตามทฤษฎี De Morgan: ~(${inner}) = ~X <strong>___</strong> ~Y จงเติมตัวดำเนินการที่ถูกต้อง (&amp; หรือ |)`,
+    hint: "ตอบเป็นเครื่องหมาย & หรือ |",
+    detail: detailBlock("ทฤษฎี De Morgan", "NOT ทุกตัวแปร แล้วเปลี่ยน & เป็น | หรือเปลี่ยน | เป็น &")
+      + detailBlock("ดูสไลด์", "บทที่ 2 · De Morgan’s Theorem"),
+    steps: `<p>1. ทฤษฎี De Morgan: NOT ทุกตัวแปร แล้วสลับตัวดำเนินการ</p>
+      <p>2. ~(${inner}) = ${result}</p>
+      <p>3. ตัวดำเนินการที่ต้องเติมคือ <strong>${answer}</strong></p>`,
+    stepsSubtitle: "ใช้ทฤษฎี De Morgan กระจายนิเสธ",
+  };
+}
+
+function buildMintermQuestion(level) {
+  const variableCount = slideLevelCount(level);
+  const variables = ["A", "B", "C", "D"].slice(0, variableCount);
+  const minterm = randomInt(0, 2 ** variableCount - 1);
+  const bits = minterm.toString(2).padStart(variableCount, "0");
+  const term = variables
+    .map((variable, index) => (bits[index] === "1" ? variable : `${variable}\u0305`))
+    .join("");
+
+  return {
+    type: "minterm",
+    answer: String(minterm),
+    answerBase: 10,
+    prompt: `เทอม <span class="mono">${term}</span> ในสมการ SOP ของตัวแปร ${variables.join(", ")} ตรงกับ minterm หมายเลขใด (เลขฐานสิบ)`,
+    hint: "ตัวแปรที่ไม่นิเสธแทนด้วย 1 ตัวแปรที่นิเสธแทนด้วย 0",
+    detail: detailBlock("ค่าไบนารีของเทอม", `<span class="mono">${bits}</span> → ${variables.map((v, i) => `${v}=${bits[i]}`).join(", ")}`)
+      + detailBlock("ดูสไลด์", "บทที่ 2 · Canonical Sum / Minterm"),
+    steps: `<p>1. อ่านเทอม ${term} ทีละตัวแปร: ตัวแปรปกติ = 1, ตัวแปรที่มีบาร์ = 0</p>
+      <p class="formula">${variables.map((v, i) => `${v} = ${bits[i]}`).join(", ")}</p>
+      <p>2. เขียนเป็นเลขฐานสองได้ <span class="mono">${bits}</span></p>
+      <p>3. แปลงเป็นฐานสิบได้ <strong>${minterm}</strong></p>`,
+    stepsSubtitle: "อ่านเทอม SOP เป็นหมายเลข minterm",
+  };
+}
+
+function buildGroupQuestion(level) {
+  const variableCount = slideLevelCount(level);
+  const size = 2 ** variableCount;
+  const ones = [];
+  for (let minterm = 0; minterm < size; minterm += 1) {
+    if (Math.random() < 0.45) ones.push(minterm);
+  }
+  if (ones.length === 0) ones.push(randomInt(0, size - 1));
+
+  return {
+    type: "group",
+    answer: String(ones.length),
+    answerBase: 10,
+    prompt: `จาก K-map ${variableCount} ตัวแปรนี้ มีช่องที่เป็น 1 ทั้งหมดกี่ช่อง`,
+    hint: "นับช่องที่มีค่า 1 ในตาราง",
+    detail: detailBlock("K-map", kmapHtml(variableCount, ones))
+      + detailBlock("ดูสไลด์", `บทที่ 3 · K-map ขนาด ${variableCount} ตัวแปร`),
+    steps: `<p>1. อ่านค่าในแต่ละช่องของ K-map</p>
+      <p>2. ช่องที่เป็น 1 คือช่องหมายเลข <span class="mono">${ones.join(", ")}</span></p>
+      <p>3. นับได้ทั้งหมด <strong>${ones.length}</strong> ช่อง</p>`,
+    stepsSubtitle: `นับช่องที่เป็น 1 ใน K-map ${variableCount} ตัวแปร`,
+  };
+}
+
+function buildSimplifyQuestion(level) {
+  const variableCount = slideLevelCount(level);
+  const variables = ["A", "B", "C", "D"].slice(0, variableCount);
+  const variableIndex = randomInt(0, variableCount - 1);
+  const value = randomInt(0, 1);
+  const ones = mintermsForFixed(variableCount, variableIndex, value);
+  const letter = variables[variableIndex];
+  const term = value === 1 ? letter : `${letter}\u0305`;
+
+  return {
+    type: "simplify",
+    answer: letter,
+    answerAliases: [letter, `${letter}'`, `~${letter}`, `${letter}\u0305`, `not${letter}`],
+    prompt: `f(${variables.join(", ")}) = Σm(${ones.join(", ")}) เมื่อลดรูปด้วย K-map แล้วเหลือตัวแปรใด (ตอบเฉพาะตัวอักษร)`,
+    hint: "ดูว่าตัวแปรใดมีค่าไม่เปลี่ยนในทุกช่องของกลุ่ม",
+    detail: detailBlock("K-map", kmapHtml(variableCount, ones))
+      + detailBlock("ดูสไลด์", "บทที่ 3 · ขั้นตอนการลดรูปให้สั้นลง"),
+    steps: `<p>1. เขียน 1 ลงในช่องหมายเลข ${ones.join(", ")} แล้วจัดกลุ่ม</p>
+      <p>2. ในกลุ่มนี้ตัวแปรอื่นเปลี่ยนค่าไปทั้ง 0 และ 1 จึงตัดทิ้งได้</p>
+      <p>3. ตัวแปร ${letter} มีค่าเป็น ${value} คงที่ทุกช่อง → ได้เทอม <span class="formula">${term}</span></p>
+      <p>4. คำตอบคือตัวแปร <strong>${letter}</strong></p>`,
+    stepsSubtitle: "ลดรูปสมการด้วย K-map",
+  };
+}
+
+function buildCellQuestion(level) {
+  const variableCount = slideLevelCount(level);
+  const variables = ["A", "B", "C", "D"].slice(0, variableCount);
+  const minterm = randomInt(0, 2 ** variableCount - 1);
+  const bits = minterm.toString(2).padStart(variableCount, "0");
+
+  return {
+    type: "cell",
+    answer: bits,
+    answerBase: 2,
+    prompt: `ช่องหมายเลข ${minterm} ใน K-map ${variableCount} ตัวแปร (${variables.join(", ")}) ตรงกับค่า ${variables.join(" ")} ใด`,
+    hint: `ตอบเป็นเลขฐานสอง ${variableCount} บิต`,
+    detail: detailBlock("K-map", kmapHtml(variableCount, [minterm], minterm))
+      + detailBlock("ดูสไลด์", `บทที่ 3 · K-map ขนาด ${variableCount} ตัวแปร`),
+    steps: `<p>1. เลขช่องใน K-map คือค่า minterm ของช่องนั้น</p>
+      <p>2. แปลง ${minterm} เป็นเลขฐานสอง ${variableCount} บิต ได้ <span class="mono">${bits}</span></p>
+      <p>3. ดังนั้น ${variables.map((v, i) => `${v} = ${bits[i]}`).join(", ")}</p>
+      <p>4. คำตอบคือ <strong>${bits}</strong></p>`,
+    stepsSubtitle: "อ่านค่า minterm จากช่องใน K-map",
+  };
+}
+
+function selectedPracticeGroup() {
+  const checked = document.querySelector('input[name="practice-group"]:checked');
+  return checked ? checked.value : "base";
+}
+
 function selectedPracticeType() {
   const checked = document.querySelector('input[name="practice-type"]:checked');
   return checked ? checked.value : "convert";
+}
+
+function selectedLogicType() {
+  const checked = document.querySelector('input[name="practice-logic-type"]:checked');
+  return checked ? checked.value : "gate";
+}
+
+function selectedKmapType() {
+  const checked = document.querySelector('input[name="practice-kmap-type"]:checked');
+  return checked ? checked.value : "group";
 }
 
 function practiceBase() {
@@ -590,14 +1026,52 @@ function practiceBase() {
   return [2, 8, 10, 16][randomInt(0, 3)];
 }
 
+function buildSlideQuestion(group, level) {
+  if (group === "logic") {
+    const requested = selectedLogicType();
+    const type = requested === "mixed"
+      ? ["gate", "truth", "demorgan", "minterm"][randomInt(0, 3)]
+      : requested;
+    if (type === "gate") return buildGateQuestion();
+    if (type === "truth") return buildTruthQuestion();
+    if (type === "demorgan") return buildDemorganQuestion();
+    return buildMintermQuestion(level);
+  }
+
+  const requested = selectedKmapType();
+  const type = requested === "mixed"
+    ? ["group", "simplify", "cell"][randomInt(0, 2)]
+    : requested;
+  if (type === "group") return buildGroupQuestion(level);
+  if (type === "simplify") return buildSimplifyQuestion(level);
+  return buildCellQuestion(level);
+}
+
 function buildPracticeQuestion() {
+  const group = selectedPracticeGroup();
+  const slideLevel = practiceLevels[practiceLevelSlidesSelect.value] || practiceLevels.medium;
+
+  if (group === "logic" || group === "kmap") {
+    return buildSlideQuestion(group, practiceLevelSlidesSelect.value);
+  }
+
+  if (group === "all") {
+    const pick = randomInt(0, 2);
+    if (pick === 1) return buildSlideQuestion("logic", practiceLevelSlidesSelect.value);
+    if (pick === 2) return buildSlideQuestion("kmap", practiceLevelSlidesSelect.value);
+  }
+
   const requestedType = selectedPracticeType();
   const type = requestedType === "mixed"
-    ? ["convert", "add", "subtract", "multiply", "divide"][randomInt(0, 4)]
+    ? ["convert", "add", "subtract", "multiply", "divide", "complement"][randomInt(0, 5)]
     : requestedType;
   const level = practiceLevels[practiceLevelSelect.value] || practiceLevels.medium;
   const base = practiceBase();
   const length = randomInt(level.min, level.max);
+
+  if (type === "complement") {
+    return buildComplementQuestion(practiceLevelSelect.value);
+  }
 
   if (type === "convert") {
     const targetBase = [2, 8, 10, 16].filter((candidate) => candidate !== base)[randomInt(0, 2)];
@@ -906,6 +1380,12 @@ function skipQuestion() {
 }
 
 function renderPracticeSteps(question) {
+  if (question.steps) {
+    practiceStepsContent.innerHTML = question.steps;
+    practiceStepsSubtitle.textContent = question.stepsSubtitle || "วิธีคิด";
+    return;
+  }
+
   const { type, base, bDigits } = question;
   const aDigits = question.aDigits || question.digits;
 
@@ -988,22 +1468,29 @@ function checkPracticeAnswer() {
     return;
   }
 
-  let parsed;
-  try {
-    parsed = parseInteger(raw, question.type === "convert" ? question.targetBase : question.base);
-  } catch (error) {
-    practiceError.textContent = error.message;
-    practiceError.hidden = false;
-    return;
+  let parsed = null;
+  const isTextAnswer = !question.answerBase && Array.isArray(question.answerAliases);
+  const answerBase = question.answerBase
+    || (question.type === "convert" ? question.targetBase : question.base);
+  const aliasMatch = (question.answerAliases || []).some(
+    (alias) => alias.trim().toUpperCase() === raw.toUpperCase(),
+  );
+
+  if (!aliasMatch && !isTextAnswer) {
+    try {
+      parsed = parseInteger(raw, answerBase);
+    } catch (error) {
+      practiceError.textContent = error.message;
+      practiceError.hidden = false;
+      return;
+    }
   }
 
   practiceError.hidden = true;
   practiceState.answered = true;
   stopTimer();
-  const expected = question.type === "convert"
-    ? parseInteger(question.answer, question.targetBase).value
-    : parseInteger(question.answer, question.base).value;
-  const isCorrect = parsed.value === expected;
+  const expected = isTextAnswer ? null : parseInteger(question.answer, answerBase).value;
+  const isCorrect = aliasMatch || (parsed !== null && parsed.value === expected);
 
   if (isCorrect) {
     practiceState.correct += 1;
@@ -1166,12 +1653,47 @@ practiceSettings.addEventListener("click", showSetup);
 
 practiceResetButton.addEventListener("click", startSet);
 
+function syncPracticeGroups() {
+  const group = selectedPracticeGroup();
+  const isBase = group === "base";
+  const isLogic = group === "logic";
+  const isKmap = group === "kmap";
+
+  practiceBaseGroup.hidden = !isBase;
+  practiceLogicGroup.hidden = !isLogic;
+  practiceKmapGroup.hidden = !isKmap;
+  practiceBaseFilters.hidden = !isBase;
+  practiceSlideFilters.hidden = isBase;
+}
+
+document.querySelectorAll('input[name="practice-group"]').forEach((input) => {
+  input.addEventListener("change", () => {
+    syncPracticeGroups();
+    if (practiceSetup.hidden) return;
+    practiceNewButton.focus();
+  });
+});
+
 document.querySelectorAll('input[name="practice-type"]').forEach((input) => {
   input.addEventListener("change", () => {
     if (practiceSetup.hidden) return;
     practiceNewButton.focus();
   });
 });
+
+document.querySelectorAll('input[name="practice-logic-type"], input[name="practice-kmap-type"]').forEach((input) => {
+  input.addEventListener("change", () => {
+    if (practiceSetup.hidden) return;
+    practiceNewButton.focus();
+  });
+});
+
+practiceLevelSlidesSelect.addEventListener("change", () => {
+  if (practiceSetup.hidden) return;
+  practiceNewButton.focus();
+});
+
+syncPracticeGroups();
 
 practiceBaseSelect.addEventListener("change", () => {
   if (practiceSetup.hidden) return;

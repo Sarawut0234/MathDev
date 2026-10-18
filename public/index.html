@@ -16,6 +16,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/style.css" />
+    <script src="/slides-data.js" defer></script>
     <script src="/app.js" defer></script>
   </head>
   <body>
@@ -70,6 +71,18 @@
         >
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.5 12 8l4.5.4-3.4 3 1 4.4-4.1-2.4-4.1 2.4 1-4.4-3.4-3L8 8z" /></svg>
           แบบฝึกหัด
+        </button>
+        <button
+          class="tab-button"
+          id="tab-slides"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-slides"
+          data-tab="slides"
+        >
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5.5h14v9H3zM8 18h4M10 14.5V18" /></svg>
+          สไลด์
         </button>
         <button
           class="tab-button"
@@ -363,6 +376,28 @@
 
         <div class="practice-setup" id="practice-setup" hidden>
           <fieldset class="practice-group">
+            <legend>หมวดโจทย์</legend>
+            <div class="practice-options practice-options--groups" id="practice-groups">
+              <label class="practice-option">
+                <input type="radio" name="practice-group" value="base" checked />
+                <span><strong>เลขฐาน</strong><small>บทที่ 1 · แปลง บวก ลบ คูณ หาร</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-group" value="logic" />
+                <span><strong>ลอจิกเกต</strong><small>บทที่ 2 · ตารางความจริง บูลีน SOP/POS</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-group" value="kmap" />
+                <span><strong>K-map</strong><small>บทที่ 3 · จัดกลุ่ม 1 ลดรูปสมการ</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-group" value="all" />
+                <span><strong>รวมทุกบท</strong><small>สุ่มคละจากสไลด์ทั้ง 3 บท</small></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="practice-group" id="practice-base-group">
             <legend>ประเภทโจทย์</legend>
             <div class="practice-options" id="practice-types">
               <label class="practice-option">
@@ -386,13 +421,65 @@
                 <span><strong>หาร</strong><small>หาผลหารและเศษ</small></span>
               </label>
               <label class="practice-option">
+                <input type="radio" name="practice-type" value="complement" />
+                <span><strong>คอมพลีเมนต์</strong><small>1’s / 2’s complement จากสไลด์</small></span>
+              </label>
+              <label class="practice-option">
                 <input type="radio" name="practice-type" value="mixed" />
                 <span><strong>อิสระ</strong><small>สุ่มทุกแบบคละกัน</small></span>
               </label>
             </div>
           </fieldset>
 
-          <div class="practice-filters">
+          <fieldset class="practice-group" id="practice-logic-group" hidden>
+            <legend>ประเภทโจทย์</legend>
+            <div class="practice-options" id="practice-logic-types">
+              <label class="practice-option">
+                <input type="radio" name="practice-logic-type" value="gate" checked />
+                <span><strong>หาค่าเอาต์พุต</strong><small>แทนค่า X, Y ในเกต</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-logic-type" value="truth" />
+                <span><strong>ตารางความจริง</strong><small>นับแถวที่เอาต์พุตเป็น 1</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-logic-type" value="demorgan" />
+                <span><strong>De Morgan</strong><small>กระจายนิเสธเข้าในวงเล็บ</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-logic-type" value="minterm" />
+                <span><strong>Minterm / Maxterm</strong><small>อ่านสมการ SOP เป็น Σm</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-logic-type" value="mixed" />
+                <span><strong>อิสระ</strong><small>สุ่มทุกแบบคละกัน</small></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="practice-group" id="practice-kmap-group" hidden>
+            <legend>ประเภทโจทย์</legend>
+            <div class="practice-options" id="practice-kmap-types">
+              <label class="practice-option">
+                <input type="radio" name="practice-kmap-type" value="group" checked />
+                <span><strong>จัดกลุ่ม 1</strong><small>นับกลุ่มที่จัดได้ใน K-map</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-kmap-type" value="simplify" />
+                <span><strong>ลดรูปสมการ</strong><small>หาสมการที่สั้นที่สุด</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-kmap-type" value="cell" />
+                <span><strong>อ่านช่อง K-map</strong><small>หาว่าเลขช่องตรงกับเทอมใด</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-kmap-type" value="mixed" />
+                <span><strong>อิสระ</strong><small>สุ่มทุกแบบคละกัน</small></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="practice-filters" id="practice-base-filters">
             <label class="base-picker" for="practice-base">
               <span>ฐานที่ใช้</span>
               <span class="select-wrap practice-select">
@@ -414,6 +501,20 @@
                   <option value="easy">ง่าย · ตัวเลขสั้น</option>
                   <option value="medium" selected>ปานกลาง</option>
                   <option value="hard">ยาก · ตัวเลขยาว</option>
+                </select>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+              </span>
+            </label>
+          </div>
+
+          <div class="practice-filters practice-filters--single" id="practice-slide-filters" hidden>
+            <label class="base-picker" for="practice-level-slides">
+              <span>ระดับความยาก</span>
+              <span class="select-wrap practice-select">
+                <select id="practice-level-slides">
+                  <option value="easy">ง่าย · ตัวแปร 2 ตัว</option>
+                  <option value="medium" selected>ปานกลาง · ตัวแปร 3 ตัว</option>
+                  <option value="hard">ยาก · ตัวแปร 4 ตัว</option>
                 </select>
                 <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
               </span>
@@ -534,6 +635,59 @@
           <button class="ghost-button score-reset" id="practice-reset" type="button">เริ่มชุดใหม่</button>
         </div>
         </div>
+      </section>
+
+      <section
+        class="converter-card slides-panel"
+        id="panel-slides"
+        role="tabpanel"
+        aria-labelledby="tab-slides"
+        data-panel="slides"
+        hidden
+      >
+        <div class="card-heading">
+          <div>
+            <h2>สไลด์บทเรียน</h2>
+            <p>บทที่ 1 เลขฐาน · บทที่ 2 ลอจิกเกต · บทที่ 3 แผนผังคาร์โนห์</p>
+          </div>
+          <span class="precision-badge"><span aria-hidden="true">✳</span> <span id="slides-total">119</span> สไลด์</span>
+        </div>
+
+        <div class="slides-chapters" id="slides-chapters" role="tablist" aria-label="เลือกบทเรียน"></div>
+
+        <div class="slides-stage">
+          <button class="slides-nav" id="slides-prev" type="button" aria-label="สไลด์ก่อนหน้า">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12 5 7 10l5 5" /></svg>
+          </button>
+          <figure class="slides-frame">
+            <img id="slides-image" src="" alt="" />
+            <figcaption class="slides-caption">
+              <span class="slides-caption-title" id="slides-title">—</span>
+              <span class="slides-caption-meta" id="slides-meta">—</span>
+            </figcaption>
+          </figure>
+          <button class="slides-nav" id="slides-next" type="button" aria-label="สไลด์ถัดไป">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m8 5 5 5-5 5" /></svg>
+          </button>
+        </div>
+
+        <div class="slides-progress">
+          <div class="slides-progress-head">
+            <span>สไลด์ที่ <strong id="slides-position">1</strong> จาก <strong id="slides-length">1</strong></span>
+            <span class="slides-progress-hint">กดปุ่มลูกศร หรือใช้แป้น ← → เพื่อเลื่อนสไลด์</span>
+          </div>
+          <div class="slides-progress-track" role="progressbar" aria-labelledby="slides-position" aria-valuemin="1" aria-valuemax="1" aria-valuenow="1">
+            <span class="slides-progress-fill" id="slides-progress-fill"></span>
+          </div>
+        </div>
+
+        <div class="slides-thumbs" id="slides-thumbs" aria-label="เลือกสไลด์"></div>
+
+        <p class="slides-note">
+          เนื้อหาในสไลด์ถูกนำไปใช้เป็นโจทย์ในแท็บ
+          <button class="link-button" id="slides-to-practice" type="button">แบบฝึกหัด</button>
+          แล้ว — เลือกหมวด “รวมทุกบท” เพื่อฝึกจากเรื่องที่เพิ่งอ่าน
+        </p>
       </section>
 
       <section
