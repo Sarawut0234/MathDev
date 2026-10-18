@@ -557,9 +557,193 @@ slidesToPractice.addEventListener("click", () => {
   }
 });
 
+slidesTotal.textContent = String(SLIDE_CHAPTERS.reduce((sum, chapter) => sum + chapter.count, 0));
+renderSlideChapters();
+renderSlideThumbs();
+renderSlide();
+
+/* ---------- เปิดสไลด์ดูเต็มหน้าจอ (lightbox) ---------- */
+
+const slidesOpen = document.querySelector("#slides-open");
+const slidesLightbox = document.querySelector("#slides-lightbox");
+const lightboxImage = document.querySelector("#lightbox-image");
+const lightboxTitle = document.querySelector("#lightbox-title");
+const lightboxSub = document.querySelector("#lightbox-sub");
+const lightboxClose = document.querySelector("#lightbox-close");
+const lightboxPrev = document.querySelector("#lightbox-prev");
+const lightboxNext = document.querySelector("#lightbox-next");
+const lightboxChapters = document.querySelector("#lightbox-chapters");
+const lightboxThumbs = document.querySelector("#lightbox-thumbs");
+const lightboxPosition = document.querySelector("#lightbox-position");
+const lightboxLength = document.querySelector("#lightbox-length");
+
+const lightboxState = { open: false, chapter: 0, index: 0, restoreFocus: null };
+let lightboxSwapTimer = 0;
+const lightboxNeighbors = new Set();
+
+function lightboxSlide() {
+  const chapter = SLIDE_CHAPTERS[lightboxState.chapter];
+  return { chapter, slide: chapter.slides[lightboxState.index], total: chapter.slides.length };
+}
+
+function renderLightboxChapters() {
+  lightboxChapters.innerHTML = SLIDE_CHAPTERS.map((chapter, index) => `
+    <button class="lightbox-chapter ${index === lightboxState.chapter ? "is-active" : ""}" type="button"
+      role="tab" aria-selected="${index === lightboxState.chapter}" data-chapter="${index}">
+      ${chapter.label}
+    </button>
+  `).join("");
+
+  lightboxChapters.querySelectorAll(".lightbox-chapter").forEach((button) => {
+    button.addEventListener("click", () => {
+      lightboxState.chapter = Number(button.dataset.chapter);
+      lightboxState.index = 0;
+      paintLightbox();
+    });
+  });
+}
+
+function renderLightboxThumbs() {
+  const { chapter } = lightboxSlide();
+  lightboxThumbs.innerHTML = chapter.slides.map((slide, index) => `
+    <button class="lightbox-thumb ${index === lightboxState.index ? "is-active" : ""}" type="button"
+      data-index="${index}" aria-label="สไลด์ที่ ${slide.n}: ${slide.t}">
+      <img src="${slideImagePath(chapter.id, slide.n)}" alt="" loading="lazy" />
+      <span>${slide.n}</span>
+    </button>
+  `).join("");
+
+  lightboxThumbs.querySelectorAll(".lightbox-thumb").forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = Number(button.dataset.index);
+      const direction = target === lightboxState.index ? 0 : target > lightboxState.index ? 1 : -1;
+      lightboxState.index = target;
+      paintLightbox(direction);
+    });
+  });
+
+  const active = lightboxThumbs.querySelector(".lightbox-thumb.is-active");
+  if (active) active.scrollIntoView({ block: "nearest", inline: "center" });
+}
+
+function preloadLightboxNeighbors() {
+  const { chapter } = lightboxSlide();
+  [lightboxState.index - 1, lightboxState.index + 1].forEach((index) => {
+    const slide = chapter.slides[index];
+    if (!slide) return;
+    const key = `${chapter.id}-${slide.n}`;
+    if (lightboxNeighbors.has(key)) return;
+    lightboxNeighbors.add(key);
+    const image = new Image();
+    image.src = slideImagePath(chapter.id, slide.n);
+  });
+}
+
+function paintLightbox(direction = 0) {
+  const { chapter, slide, total } = lightboxSlide();
+
+  lightboxImage.src = slideImagePath(chapter.id, slide.n);
+  lightboxImage.alt = `${chapter.label} ${chapter.title} สไลด์ที่ ${slide.n}: ${slide.t}`;
+  lightboxTitle.textContent = slide.t;
+  lightboxSub.textContent = `${chapter.label} · ${chapter.title}`;
+  lightboxPosition.textContent = String(slide.n);
+  lightboxLength.textContent = String(total);
+  lightboxPrev.disabled = lightboxState.index === 0;
+  lightboxNext.disabled = lightboxState.index === total - 1;
+
+  renderLightboxChapters();
+  renderLightboxThumbs();
+  preloadLightboxNeighbors();
+
+  lightboxImage.classList.remove("is-swap-prev", "is-swap-next");
+  if (direction !== 0) {
+    void lightboxImage.offsetWidth;
+    lightboxImage.classList.add(direction > 0 ? "is-swap-next" : "is-swap-prev");
+    window.clearTimeout(lightboxSwapTimer);
+    lightboxSwapTimer = window.setTimeout(() => {
+      lightboxImage.classList.remove("is-swap-prev", "is-swap-next");
+    }, 340);
+  }
+}
+
+function stepLightbox(delta) {
+  const { total } = lightboxSlide();
+  const next = lightboxState.index + delta;
+  if (next < 0 || next >= total) return;
+  lightboxState.index = next;
+  paintLightbox(delta);
+}
+
+function openLightbox() {
+  if (lightboxState.open) return;
+  lightboxState.chapter = slidesState.chapter;
+  lightboxState.index = slidesState.index;
+  lightboxState.open = true;
+  const active = document.activeElement;
+  lightboxState.restoreFocus = active instanceof HTMLElement && active !== document.body ? active : slidesOpen;
+  slidesLightbox.hidden = false;
+  document.body.classList.add("is-lightbox-open");
+  paintLightbox();
+  lightboxClose.focus();
+}
+
+function closeLightbox() {
+  if (!lightboxState.open) return;
+  lightboxState.open = false;
+  slidesLightbox.hidden = true;
+  document.body.classList.remove("is-lightbox-open");
+
+  slidesState.chapter = lightboxState.chapter;
+  slidesState.index = lightboxState.index;
+  renderSlideChapters();
+  renderSlideThumbs();
+  renderSlide();
+
+  const focusTarget = lightboxState.restoreFocus;
+  lightboxState.restoreFocus = null;
+  if (focusTarget && document.contains(focusTarget)) focusTarget.focus();
+}
+
+slidesOpen.addEventListener("click", openLightbox);
+lightboxClose.addEventListener("click", closeLightbox);
+lightboxPrev.addEventListener("click", () => stepLightbox(-1));
+lightboxNext.addEventListener("click", () => stepLightbox(1));
+
+slidesLightbox.querySelectorAll("[data-lightbox-close]").forEach((element) => {
+  element.addEventListener("click", closeLightbox);
+});
+
 document.addEventListener("keydown", (event) => {
-  if (document.querySelector("#panel-slides").hidden) return;
-  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement) return;
+  const isTyping = event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement;
+
+  if (lightboxState.open) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeLightbox();
+    } else if (!isTyping && event.key === "ArrowLeft") {
+      event.preventDefault();
+      stepLightbox(-1);
+    } else if (!isTyping && event.key === "ArrowRight") {
+      event.preventDefault();
+      stepLightbox(1);
+    } else if (event.key === "Tab") {
+      // อยู่ในหน้าต่างสไลด์เท่านั้น
+      const focusables = slidesLightbox.querySelectorAll("button:not(:disabled)");
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+    return;
+  }
+
+  if (document.querySelector("#panel-slides").hidden || isTyping) return;
   if (event.key === "ArrowLeft") {
     event.preventDefault();
     stepSlide(-1);
@@ -568,11 +752,6 @@ document.addEventListener("keydown", (event) => {
     stepSlide(1);
   }
 });
-
-slidesTotal.textContent = String(SLIDE_CHAPTERS.reduce((sum, chapter) => sum + chapter.count, 0));
-renderSlideChapters();
-renderSlideThumbs();
-renderSlide();
 
 const practiceForm = document.querySelector("#practice-form");
 const practiceAnswer = document.querySelector("#practice-answer");
@@ -1565,19 +1744,22 @@ function renderLeaderboard() {
 
   const top = entries.slice(0, 3);
   leaderboardPodium.hidden = top.length === 0;
-  leaderboardPodium.querySelectorAll(".card").forEach((card, index) => {
-    const entry = top[index];
-    const name = card.querySelector('[data-slot="name"]');
-    const score = card.querySelector('[data-slot="score"]');
-    const meta = card.querySelector('[data-slot="meta"]');
+  leaderboardPodium.querySelectorAll(".podium-spot").forEach((spot) => {
+    const rank = Number(spot.dataset.rank);
+    const entry = top[rank - 1];
+    const name = spot.querySelector('[data-slot="name"]');
+    const score = spot.querySelector('[data-slot="score"]');
+    const meta = spot.querySelector('[data-slot="meta"]');
+    const avatar = spot.querySelector('[data-slot="avatar"]');
     if (!entry) {
-      card.hidden = true;
+      spot.hidden = true;
       return;
     }
-    card.hidden = false;
+    spot.hidden = false;
     name.textContent = entry.name;
     score.textContent = entry.correct;
     meta.textContent = `ตอบถูก · เฉลี่ย ${formatClock(entry.averageSeconds)}`;
+    avatar.textContent = entry.name.trim().charAt(0).toUpperCase() || "?";
   });
 
   entries.forEach((entry, index) => {

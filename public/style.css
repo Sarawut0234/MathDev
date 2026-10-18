@@ -1305,331 +1305,377 @@ p {
   padding: 0 18px;
 }
 
-/* Top-3 cards — adapted from Uiverse.io by ilkhoeri (rotating card stack) */
-.wrap_card {
-  position: relative;
-  overflow: hidden;
-  width: var(--w-wrap-card);
-  height: calc(var(--t-card) + var(--h-card) * 1.16);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 18px;
-  --w-card: 150px;
-  --h-card: 200px;
-  --rotate-card: 15deg;
-  --insetX-card: 22px;
-  --t-card: calc(var(--insetX-card) * 1.25);
-  --w-wrap-card: calc(var(--w-card) + calc(calc(var(--w-card) / 2) * 2));
+/* ---------- โพเดียม 3 อันดับแรก ---------- */
+
+.podium {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: 10px;
+  margin: 6px auto 22px;
+  padding: 26px 10px 0;
+  max-width: 560px;
 }
 
-.wrap_card[hidden] {
+.podium[hidden] {
   display: none;
 }
 
-.wrap_card .content {
-  background-color: #ffffff50;
-  overflow: hidden;
+.podium-spot {
   position: relative;
-  width: calc(100% - calc(var(--pd) * 2));
-  height: calc(100% - calc(var(--pd) * 2));
-  border-radius: calc(var(--round) - var(--pd));
-}
-
-.wrap_card .content > span {
-  font-size: 300px;
-  font-weight: 800;
-  line-height: 0.75;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  inset: 50% 0 0 50%;
-  transform: translate(-50%, -50%);
-  background-clip: text;
-  -webkit-text-stroke-width: 3px;
-  color: transparent;
-  opacity: 0;
-  background-image: linear-gradient(-45deg, #ffffff25 0%, #ffffffac 100%);
-  animation: opacity 0s cubic-bezier(1, 0, 0, 1) forwards var(--delay) reverse;
-}
-
-.wrap_card .content > svg {
-  height: 66px;
-  width: 66px;
-  position: absolute;
-  inset: 50% 0 0 50%;
-  opacity: 1;
-  animation: opacity 8.4s cubic-bezier(1, 0, 0, 1) forwards calc(var(--delay) - 4.3s);
-  transform: translate(-50%, -50%);
-}
-
-.wrap_card .card:nth-child(1) {
-  --delay: 4.3s;
-}
-
-.wrap_card .card:nth-child(2) {
-  --delay: 7.3s;
-}
-
-.wrap_card .card:nth-child(3) {
-  --delay: 10.3s;
-}
-
-@keyframes opacity {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-.wrap_card .card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  overflow: hidden;
-  animation: rotating 9s cubic-bezier(0.75, 0, 0, 1.01) infinite 0s;
-  border-radius: var(--round);
-  background: var(--bg);
-  order: var(--order);
-  width: var(--w-card);
-  height: var(--h-card);
-  z-index: var(--z1);
-  top: var(--t1);
-  left: var(--l1);
-  right: var(--r1);
-  transform: var(--trans1);
-  --pd: 4px;
-  --round: 16px;
-  --x1: var(--insetX-card);
-  --x2: calc(var(--w-wrap-card) - calc(var(--w-card) + var(--insetX-card)));
-  --to-left: rotate(calc(var(--rotate-card) * -1));
-  --to-center: calc(var(--w-card) / 2);
-  --to-right: rotate(calc(var(--rotate-card) * 1));
-}
-
-.wrap_card .card:nth-child(1) {
-  --order: 2;
-  --bg: radial-gradient(circle, rgba(252, 240, 142, 1) 0%, rgba(246, 173, 32, 1) 40%, rgba(192, 142, 8, 1) 100%);
-  --z1: 2;
-  --t1: 0;
-  --l1: var(--to-center);
-  --r1: var(--to-center);
-  --trans1: rotate(calc(var(--rotate-card) * 0));
-  --z2: 0;
-  --t2: var(--t-card);
-  --l2: var(--x1);
-  --r2: var(--x2);
-  --trans2: var(--to-left);
-  --z3: 0;
-  --t3: var(--t-card);
-  --l3: var(--x2);
-  --r3: var(--x1);
-  --trans3: var(--to-right);
-}
-
-.wrap_card .card:nth-child(2) {
-  --order: 3;
-  --bg: radial-gradient(circle, rgba(142, 249, 252, 1) 0%, rgba(32, 164, 246, 1) 40%, rgba(8, 81, 192, 1) 100%);
-  --z1: 0;
-  --t1: var(--t-card);
-  --l1: var(--x2);
-  --r1: var(--x1);
-  --trans1: var(--to-right);
-  --z2: 2;
-  --t2: 0;
-  --l2: var(--to-center);
-  --r2: var(--to-center);
-  --trans2: rotate(calc(var(--rotate-card) * 0));
-  --z3: 0;
-  --t3: var(--t-card);
-  --l3: var(--x1);
-  --r3: var(--x2);
-  --trans3: var(--to-left);
-}
-
-.wrap_card .card:nth-child(3) {
-  --order: 1;
-  --bg: radial-gradient(circle, rgba(222, 128, 233, 1) 0%, rgba(213, 32, 246, 1) 40%, rgba(139, 6, 157, 1) 100%);
-  --z1: 0;
-  --t1: var(--t-card);
-  --l1: var(--x1);
-  --r1: var(--x2);
-  --trans1: var(--to-left);
-  --z2: 0;
-  --t2: var(--t-card);
-  --l2: var(--x2);
-  --r2: var(--x1);
-  --trans2: var(--to-right);
-  --z3: 2;
-  --t3: 0;
-  --l3: var(--to-center);
-  --r3: var(--to-center);
-  --trans3: rotate(calc(var(--rotate-card) * 0));
-}
-
-@keyframes rotating {
-  0%,
-  99.99% {
-    z-index: var(--z1);
-    top: var(--t1);
-    left: var(--l1);
-    right: var(--r1);
-    transform: var(--trans1);
-  }
-  33.33% {
-    z-index: var(--z2);
-    top: var(--t2);
-    left: var(--l2);
-    right: var(--r2);
-    transform: var(--trans2);
-  }
-  66.66% {
-    z-index: var(--z3);
-    top: var(--t3);
-    left: var(--l3);
-    right: var(--r3);
-    transform: var(--trans3);
-  }
-}
-
-.wrap_card .lines {
-  position: absolute;
-  inset: auto 0 0;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 4;
-}
-
-.wrap_card .lines::after {
-  content: "";
-  width: 100%;
-  height: 0px;
-  position: absolute;
-  z-index: 2;
-  inset: 0;
-  --mask-bg: #e8e8e8;
-  background: var(--mask-bg);
-  mask-image: radial-gradient(50% 200px at top, transparent 20%, var(--mask-bg));
-}
-
-.wrap_card .line {
-  position: absolute;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.wrap_card .line::before,
-.wrap_card .line::after {
-  content: "";
-  position: absolute;
-  inset: auto;
-  background: linear-gradient(
-    to right,
-    var(--gradient-a-line, #0000),
-    var(--gradient-b-line, #0000),
-    var(--gradient-c-line, #0000)
-  );
-  filter: var(--blur-line);
-  width: var(--w-line);
-  height: var(--h-line);
-}
-
-.wrap_card .line:nth-child(1)::before {
-  --blur-line: blur(4px);
-  --w-line: 100%;
-  --h-line: 5px;
-  --gradient-b-line: #2f69f2;
-}
-
-.wrap_card .line:nth-child(1)::after {
-  --w-line: 100%;
-  --h-line: 1px;
-  --gradient-b-line: #6366f1;
-}
-
-.wrap_card .line:nth-child(2)::before {
-  --blur-line: blur(4px);
-  --w-line: 50%;
-  --h-line: 5px;
-  --gradient-b-line: #84ccfc;
-}
-
-.wrap_card .line:nth-child(2)::after {
-  --w-line: 50%;
-  --h-line: 1px;
-  --gradient-b-line: #14d3f5;
-}
-
-.card-defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  visibility: hidden;
-}
-
-.wrap_card .icon {
-  display: block;
-}
-
-/* Player info overlaid on each rotating card */
-.card-info {
-  position: absolute;
-  inset: auto 0 0;
-  z-index: 3;
   display: grid;
   justify-items: center;
-  gap: 1px;
-  padding: 10px 8px 12px;
+  gap: 0;
+  min-width: 0;
+}
+
+.podium-spot[hidden] {
+  display: none;
+}
+
+.podium-card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  width: 100%;
+  padding: 16px 8px 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  background: linear-gradient(165deg, #ffffff 0%, #f6f5ff 100%);
+  box-shadow: 0 10px 24px rgba(31, 27, 74, 0.1);
   text-align: center;
-  pointer-events: none;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 220ms ease;
 }
 
-.card-info::before {
-  content: "";
+.podium-spot:hover .podium-card {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px rgba(31, 27, 74, 0.16);
+}
+
+.podium-medal {
   position: absolute;
-  inset: -16px -20px 0;
-  z-index: -1;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.36) 0%, rgba(0, 0, 0, 0.16) 55%, rgba(0, 0, 0, 0) 100%);
+  top: 8px;
+  left: 8px;
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border-radius: 50%;
+  background: #eef0f7;
+  color: #7c8195;
+  font-family: "Inter", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
 }
 
-.card-name {
+.podium-avatar {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 4px;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(150deg, #e9e6ff, #d7d2ff);
+  color: var(--purple-dark);
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.podium-name {
   overflow: hidden;
   max-width: 100%;
-  color: #fff;
+  color: var(--ink);
   font-family: "IBM Plex Sans Thai", sans-serif;
   font-size: 12px;
   font-weight: 600;
   text-overflow: ellipsis;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
   white-space: nowrap;
 }
 
-.card-score {
-  color: #fff;
+.podium-score {
+  color: var(--purple);
   font-family: "Inter", sans-serif;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
-  line-height: 1.1;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+  line-height: 1.15;
 }
 
-.card-meta {
-  color: rgba(255, 255, 255, 0.95);
+.podium-meta {
+  color: #9a9eac;
   font-family: "IBM Plex Sans Thai", sans-serif;
   font-size: 9px;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+  white-space: nowrap;
+}
+
+.podium-base {
+  display: grid;
+  width: 100%;
+  place-items: center;
+  border-radius: 0 0 12px 12px;
+  background: linear-gradient(180deg, #eceafd, #e2dffb);
+  color: rgba(98, 84, 232, 0.5);
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.podium-spot--1 .podium-base {
+  height: 62px;
+}
+
+.podium-spot--2 .podium-base {
+  height: 44px;
+}
+
+.podium-spot--3 .podium-base {
+  height: 34px;
+}
+
+/* ---------- อันดับ 1: การ์ดทองพร้อมเอฟเฟกต์ ---------- */
+
+.podium-spot--1 {
+  z-index: 2;
+}
+
+.podium-spot--1 .podium-card {
+  padding-top: 22px;
+  border: 1px solid rgba(255, 214, 122, 0.9);
+  background:
+    radial-gradient(120% 90% at 50% 0%, #fff8e2 0%, #ffe9b0 42%, #f6c65a 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.7) inset,
+    0 14px 34px rgba(214, 158, 32, 0.34),
+    0 0 26px rgba(255, 196, 66, 0.42);
+  animation: podium-glow 3.6s ease-in-out infinite;
+}
+
+.podium-spot--1 .podium-medal {
+  background: linear-gradient(150deg, #fff3cf, #f0b93c);
+  color: #7a5205;
+  box-shadow: 0 2px 6px rgba(160, 110, 10, 0.35);
+}
+
+.podium-spot--1 .podium-avatar {
+  background: linear-gradient(150deg, #fffdf5, #ffe6a8);
+  color: #8a5c05;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 4px 12px rgba(180, 126, 12, 0.28);
+}
+
+.podium-spot--1 .podium-name {
+  color: #5c3d02;
+}
+
+.podium-spot--1 .podium-score {
+  color: #8a5c05;
+  font-size: 27px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.podium-spot--1 .podium-meta {
+  color: rgba(122, 82, 5, 0.72);
+}
+
+.podium-spot--1 .podium-base {
+  background: linear-gradient(180deg, #f7d98d, #e9b845);
+  color: rgba(122, 82, 5, 0.6);
+}
+
+/* แสงกวาดผ่านการ์ด */
+.podium-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.85) 46%,
+    rgba(255, 255, 255, 0.15) 54%,
+    transparent 68%
+  );
+  transform: translateX(-130%);
+  animation: podium-shine 4.6s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  pointer-events: none;
+}
+
+/* รัศมีหมุนช้า ๆ ด้านหลัง */
+.podium-rays {
+  position: absolute;
+  top: -46%;
+  left: 50%;
+  width: 190%;
+  aspect-ratio: 1;
+  translate: -50% 0;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0.55) 0deg 8deg,
+    transparent 8deg 30deg,
+    rgba(255, 255, 255, 0.4) 30deg 38deg,
+    transparent 38deg 60deg
+  );
+  mask-image: radial-gradient(circle, #000 0%, transparent 62%);
+  opacity: 0.55;
+  animation: podium-rays 22s linear infinite;
+  pointer-events: none;
+}
+
+/* ประกายดาว */
+.podium-sparks {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.podium-sparks i {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fffdf2;
+  box-shadow: 0 0 8px 2px rgba(255, 236, 168, 0.95);
+  opacity: 0;
+  animation: podium-spark 3.2s ease-in-out infinite;
+}
+
+.podium-sparks i:nth-child(1) {
+  top: 16%;
+  left: 14%;
+  animation-delay: 0s;
+}
+
+.podium-sparks i:nth-child(2) {
+  top: 30%;
+  right: 12%;
+  width: 4px;
+  height: 4px;
+  animation-delay: 0.55s;
+}
+
+.podium-sparks i:nth-child(3) {
+  top: 58%;
+  left: 8%;
+  width: 3px;
+  height: 3px;
+  animation-delay: 1.1s;
+}
+
+.podium-sparks i:nth-child(4) {
+  top: 70%;
+  right: 16%;
+  animation-delay: 1.65s;
+}
+
+.podium-sparks i:nth-child(5) {
+  top: 10%;
+  left: 48%;
+  width: 3px;
+  height: 3px;
+  animation-delay: 2.2s;
+}
+
+.podium-sparks i:nth-child(6) {
+  top: 44%;
+  right: 30%;
+  width: 3px;
+  height: 3px;
+  animation-delay: 2.75s;
+}
+
+/* มงกุฎเหนือการ์ด */
+.podium-crown {
+  position: absolute;
+  top: -19px;
+  left: 50%;
+  z-index: 3;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  background: linear-gradient(150deg, #fff6d8, #f2bd45);
+  box-shadow: 0 4px 12px rgba(190, 132, 12, 0.4);
+  translate: -50% 0;
+  animation: podium-crown 3.6s ease-in-out infinite;
+}
+
+.podium-crown svg {
+  width: 18px;
+  fill: none;
+  stroke: #8a5c05;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.6;
+}
+
+@keyframes podium-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.7) inset,
+      0 14px 34px rgba(214, 158, 32, 0.3),
+      0 0 22px rgba(255, 196, 66, 0.34);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.85) inset,
+      0 18px 40px rgba(214, 158, 32, 0.42),
+      0 0 38px rgba(255, 196, 66, 0.62);
+  }
+}
+
+@keyframes podium-shine {
+  0%,
+  62% {
+    transform: translateX(-130%);
+  }
+  100% {
+    transform: translateX(130%);
+  }
+}
+
+@keyframes podium-rays {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes podium-spark {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes podium-crown {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-3deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(3deg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wrap_card .card {
+  .podium-spot--1 .podium-card,
+  .podium-shine,
+  .podium-rays,
+  .podium-sparks i,
+  .podium-crown {
     animation: none;
+  }
+
+  .podium-shine,
+  .podium-sparks {
+    display: none;
   }
 }
 
@@ -2045,24 +2091,61 @@ p {
     padding: 22px 15px 20px;
   }
 
-  .wrap_card {
-    --w-card: 108px;
-    --h-card: 144px;
-    --insetX-card: 20px;
-    max-width: 100%;
-    margin-bottom: 14px;
+  .podium {
+    gap: 7px;
+    padding: 24px 4px 0;
+    margin-bottom: 18px;
   }
 
-  .card-name {
+  .podium-card {
+    padding: 14px 6px 10px;
+    border-radius: 13px;
+  }
+
+  .podium-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+  }
+
+  .podium-name {
     font-size: 11px;
   }
 
-  .card-score {
-    font-size: 17px;
+  .podium-score {
+    font-size: 19px;
   }
 
-  .card-meta {
+  .podium-spot--1 .podium-score {
+    font-size: 23px;
+  }
+
+  .podium-meta {
     font-size: 8px;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .podium-crown {
+    width: 28px;
+    height: 28px;
+    top: -16px;
+  }
+
+  .podium-crown svg {
+    width: 15px;
+  }
+
+  .podium-spot--1 .podium-base {
+    height: 50px;
+  }
+
+  .podium-spot--2 .podium-base {
+    height: 36px;
+  }
+
+  .podium-spot--3 .podium-base {
+    height: 28px;
   }
 
   .leaderboard-table th,
@@ -2182,22 +2265,41 @@ p {
 
 /* Very narrow screens: give each operand a full-width row so digits are not clipped */
 @media (max-width: 300px) {
-  .wrap_card {
-    --w-card: 84px;
-    --h-card: 112px;
-    --insetX-card: 14px;
+  .podium {
+    gap: 5px;
+    padding: 22px 2px 0;
   }
 
-  .card-name {
+  .podium-card {
+    padding: 12px 4px 9px;
+  }
+
+  .podium-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+
+  .podium-name {
     font-size: 10px;
   }
 
-  .card-score {
-    font-size: 15px;
+  .podium-score {
+    font-size: 16px;
   }
 
-  .card-meta {
+  .podium-spot--1 .podium-score {
+    font-size: 19px;
+  }
+
+  .podium-meta {
     font-size: 7px;
+  }
+
+  .podium-medal {
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
   }
 
   .tab-button {
@@ -2343,7 +2445,17 @@ p {
   background: #fff;
 }
 
-.slides-frame img {
+.slides-open {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: #fff;
+  cursor: zoom-in;
+}
+
+.slides-open img {
   display: block;
   width: 100%;
   max-width: 100%;
@@ -2351,6 +2463,44 @@ p {
   aspect-ratio: 16 / 9;
   object-fit: contain;
   background: #fff;
+}
+
+.slides-open-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(27, 32, 51, 0.62);
+  color: #fff;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 10px;
+  opacity: 0;
+  backdrop-filter: blur(6px);
+  transition: opacity 180ms ease, transform 180ms ease;
+  transform: translateY(-4px);
+}
+
+.slides-open-hint svg {
+  width: 12px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.7;
+}
+
+.slides-open:hover .slides-open-hint,
+.slides-open:focus-visible .slides-open-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slides-open:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: -2px;
 }
 
 .slides-caption {
@@ -2487,6 +2637,345 @@ p {
   text-decoration: underline;
 }
 
+/* ---------- สไลด์เต็มหน้าจอ (lightbox) ---------- */
+
+body.is-lightbox-open {
+  overflow: hidden;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  animation: lightbox-in 200ms ease;
+}
+
+.lightbox[hidden] {
+  display: none;
+}
+
+.lightbox-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 17, 30, 0.86);
+  backdrop-filter: blur(6px);
+  cursor: zoom-out;
+}
+
+.lightbox-inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 8px;
+  width: min(100%, 1180px);
+  height: calc(100vh - 36px);
+  animation: lightbox-rise 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lightbox-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding: 0 4px;
+}
+
+.lightbox-meta {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.lightbox-title {
+  overflow: hidden;
+  color: #fff;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lightbox-sub {
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.62);
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lightbox-close {
+  display: grid;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.lightbox-close:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.18);
+  transform: rotate(90deg);
+}
+
+.lightbox-close:focus-visible,
+.lightbox-nav:focus-visible,
+.lightbox-chapter:focus-visible,
+.lightbox-thumb:focus-visible {
+  outline: 2px solid #b9b2f7;
+  outline-offset: 2px;
+}
+
+.lightbox-close svg {
+  width: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
+.lightbox-stage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.lightbox-image {
+  display: block;
+  flex: 0 1 auto;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.46);
+}
+
+.lightbox-image.is-swap-next {
+  animation: lightbox-slide-next 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lightbox-image.is-swap-prev {
+  animation: lightbox-slide-prev 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lightbox-nav {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.lightbox-nav svg {
+  width: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.lightbox-nav:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-nav:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+.lightbox-foot {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.lightbox-chapters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+}
+
+.lightbox-chapter {
+  padding: 5px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 11px;
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.lightbox-chapter:hover {
+  border-color: rgba(255, 255, 255, 0.42);
+  color: #fff;
+}
+
+.lightbox-chapter.is-active {
+  border-color: transparent;
+  background: var(--purple);
+  color: #fff;
+  font-weight: 600;
+}
+
+.lightbox-thumbs {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  padding-bottom: 6px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.lightbox-thumb {
+  position: relative;
+  flex: 0 0 auto;
+  width: 68px;
+  padding: 0;
+  overflow: hidden;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 7px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.lightbox-thumb img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.lightbox-thumb span {
+  display: block;
+  padding: 2px 0 3px;
+  background: rgba(20, 22, 36, 0.9);
+  color: rgba(255, 255, 255, 0.7);
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+}
+
+.lightbox-thumb:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+}
+
+.lightbox-thumb.is-active {
+  border-color: var(--purple);
+}
+
+.lightbox-thumb.is-active span {
+  background: var(--purple);
+  color: #fff;
+  font-weight: 600;
+}
+
+.lightbox-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 10px;
+}
+
+.lightbox-hint kbd {
+  padding: 1px 5px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.82);
+  font-family: "Inter", sans-serif;
+  font-size: 9px;
+}
+
+.lightbox-counter {
+  margin-left: 6px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lightbox-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes lightbox-slide-next {
+  from {
+    opacity: 0.35;
+    transform: translateX(26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes lightbox-slide-prev {
+  from {
+    opacity: 0.35;
+    transform: translateX(-26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox,
+  .lightbox-inner,
+  .lightbox-image {
+    animation: none;
+  }
+}
+
 /* ---------- โจทย์จากสไลด์ ---------- */
 
 .practice-options--groups {
@@ -2603,6 +3092,57 @@ p {
 
   .slides-thumb {
     width: 62px;
+  }
+
+  .lightbox {
+    padding: 10px;
+  }
+
+  .lightbox-inner {
+    grid-template-rows: auto auto auto;
+    align-content: space-between;
+    height: calc(100vh - 20px);
+  }
+
+  .lightbox-stage {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "img img"
+      "prev next";
+    gap: 8px;
+  }
+
+  .lightbox-image {
+    grid-area: img;
+  }
+
+  .lightbox-nav {
+    position: static;
+    width: 38px;
+    height: 38px;
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  #lightbox-prev {
+    grid-area: prev;
+    justify-self: end;
+  }
+
+  #lightbox-next {
+    grid-area: next;
+    justify-self: start;
+  }
+
+
+  .lightbox-hint {
+    flex-wrap: wrap;
+  }
+
+  .lightbox-thumb {
+    width: 58px;
   }
 
   .practice-options--groups {
