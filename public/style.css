@@ -43,6 +43,16 @@ button {
   margin: 0 auto;
 }
 
+/* Panels share one grid so the main card and the steps card line up */
+.panels {
+  display: grid;
+  gap: 16px;
+}
+
+.panels > [hidden] {
+  display: none;
+}
+
 .topbar {
   display: flex;
   height: 84px;
@@ -547,7 +557,6 @@ p {
 }
 
 .steps-card {
-  margin-top: 15px;
   padding: 19px 22px 18px;
 }
 
@@ -1689,6 +1698,7 @@ p {
 }
 
 .quick-guide {
+  margin-top: 16px;
   padding: 24px 1px 0;
 }
 
@@ -1794,11 +1804,11 @@ p {
   }
 
   .page-shell {
-    width: min(100% - 32px, 480px);
+    width: min(100% - 28px, 480px);
   }
 
   .topbar {
-    height: 69px;
+    height: 62px;
   }
 
   .brand {
@@ -1816,7 +1826,7 @@ p {
   }
 
   .hero {
-    padding: 33px 0 24px;
+    padding: 22px 0 18px;
   }
 
   .eyebrow {
@@ -1825,10 +1835,10 @@ p {
   }
 
   .hero h1 {
-    margin-top: 12px;
-    font-size: clamp(33px, 9vw, 42px);
-    letter-spacing: -1px;
-    line-height: 1.4;
+    margin-top: 10px;
+    font-size: clamp(28px, 7.6vw, 36px);
+    letter-spacing: -0.8px;
+    line-height: 1.38;
   }
 
   .mobile-break {
@@ -1842,13 +1852,17 @@ p {
     line-height: 1.7;
   }
 
+  .panels {
+    gap: 12px;
+  }
+
   .converter-card {
-    padding: 21px 17px 17px;
+    padding: 19px 16px 16px;
     border-radius: 15px;
   }
 
   .card-heading {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 
   .card-heading h2 {
@@ -1899,6 +1913,19 @@ p {
     display: flex;
     width: 100%;
     margin-bottom: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    box-shadow: 0 6px 18px rgba(39, 43, 78, 0.07);
+  }
+
+  /* Mask the rounded corners so scrolling content never peeks through */
+  .tabs::before {
+    content: "";
+    position: absolute;
+    inset: -10px -10px 0;
+    z-index: -1;
+    background: var(--page);
   }
 
   .tab-button {
