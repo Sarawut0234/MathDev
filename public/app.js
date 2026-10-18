@@ -1074,21 +1074,23 @@ function renderLeaderboard() {
     .slice(0, 10);
 
   leaderboardEmpty.hidden = entries.length > 0;
-  leaderboardPodium.innerHTML = "";
   leaderboardBody.innerHTML = "";
 
-  const medals = ["1", "2", "3"];
-  const classes = ["is-first", "is-second", "is-third"];
-  entries.slice(0, 3).forEach((entry, index) => {
-    const card = document.createElement("div");
-    card.className = `podium-card ${classes[index]}`;
-    card.innerHTML = `
-      <span class="podium-medal">${medals[index]}</span>
-      <span class="podium-name">${escapeHtml(entry.name)}</span>
-      <span class="podium-score">${entry.correct}</span>
-      <span class="podium-meta">ตอบถูก · เฉลี่ย ${formatClock(entry.averageSeconds)}</span>
-    `;
-    leaderboardPodium.append(card);
+  const top = entries.slice(0, 3);
+  leaderboardPodium.hidden = top.length === 0;
+  leaderboardPodium.querySelectorAll(".card").forEach((card, index) => {
+    const entry = top[index];
+    const name = card.querySelector('[data-slot="name"]');
+    const score = card.querySelector('[data-slot="score"]');
+    const meta = card.querySelector('[data-slot="meta"]');
+    if (!entry) {
+      card.hidden = true;
+      return;
+    }
+    card.hidden = false;
+    name.textContent = entry.name;
+    score.textContent = entry.correct;
+    meta.textContent = `ตอบถูก · เฉลี่ย ${formatClock(entry.averageSeconds)}`;
   });
 
   entries.forEach((entry, index) => {

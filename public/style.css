@@ -1292,94 +1292,332 @@ p {
   padding: 0 18px;
 }
 
-.podium {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: end;
-  gap: 10px;
-  margin-bottom: 18px;
+/* Top-3 cards — adapted from Uiverse.io by ilkhoeri (rotating card stack) */
+.wrap_card {
+  position: relative;
+  overflow: hidden;
+  width: var(--w-wrap-card);
+  height: calc(var(--t-card) + var(--h-card) * 1.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  --w-card: 150px;
+  --h-card: 200px;
+  --rotate-card: 15deg;
+  --insetX-card: 22px;
+  --t-card: calc(var(--insetX-card) * 1.25);
+  --w-wrap-card: calc(var(--w-card) + calc(calc(var(--w-card) / 2) * 2));
 }
 
-.podium:empty {
+.wrap_card[hidden] {
   display: none;
 }
 
-.podium-card {
+.wrap_card .content {
+  background-color: #ffffff50;
+  overflow: hidden;
+  position: relative;
+  width: calc(100% - calc(var(--pd) * 2));
+  height: calc(100% - calc(var(--pd) * 2));
+  border-radius: calc(var(--round) - var(--pd));
+}
+
+.wrap_card .content > span {
+  font-size: 300px;
+  font-weight: 800;
+  line-height: 0.75;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 50% 0 0 50%;
+  transform: translate(-50%, -50%);
+  background-clip: text;
+  -webkit-text-stroke-width: 3px;
+  color: transparent;
+  opacity: 0;
+  background-image: linear-gradient(-45deg, #ffffff25 0%, #ffffffac 100%);
+  animation: opacity 0s cubic-bezier(1, 0, 0, 1) forwards var(--delay) reverse;
+}
+
+.wrap_card .content > svg {
+  height: 66px;
+  width: 66px;
+  position: absolute;
+  inset: 50% 0 0 50%;
+  opacity: 1;
+  animation: opacity 8.4s cubic-bezier(1, 0, 0, 1) forwards calc(var(--delay) - 4.3s);
+  transform: translate(-50%, -50%);
+}
+
+.wrap_card .card:nth-child(1) {
+  --delay: 4.3s;
+}
+
+.wrap_card .card:nth-child(2) {
+  --delay: 7.3s;
+}
+
+.wrap_card .card:nth-child(3) {
+  --delay: 10.3s;
+}
+
+@keyframes opacity {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.wrap_card .card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  overflow: hidden;
+  animation: rotating 9s cubic-bezier(0.75, 0, 0, 1.01) infinite 0s;
+  border-radius: var(--round);
+  background: var(--bg);
+  order: var(--order);
+  width: var(--w-card);
+  height: var(--h-card);
+  z-index: var(--z1);
+  top: var(--t1);
+  left: var(--l1);
+  right: var(--r1);
+  transform: var(--trans1);
+  --pd: 4px;
+  --round: 16px;
+  --x1: var(--insetX-card);
+  --x2: calc(var(--w-wrap-card) - calc(var(--w-card) + var(--insetX-card)));
+  --to-left: rotate(calc(var(--rotate-card) * -1));
+  --to-center: calc(var(--w-card) / 2);
+  --to-right: rotate(calc(var(--rotate-card) * 1));
+}
+
+.wrap_card .card:nth-child(1) {
+  --order: 2;
+  --bg: radial-gradient(circle, rgba(252, 240, 142, 1) 0%, rgba(246, 173, 32, 1) 40%, rgba(192, 142, 8, 1) 100%);
+  --z1: 2;
+  --t1: 0;
+  --l1: var(--to-center);
+  --r1: var(--to-center);
+  --trans1: rotate(calc(var(--rotate-card) * 0));
+  --z2: 0;
+  --t2: var(--t-card);
+  --l2: var(--x1);
+  --r2: var(--x2);
+  --trans2: var(--to-left);
+  --z3: 0;
+  --t3: var(--t-card);
+  --l3: var(--x2);
+  --r3: var(--x1);
+  --trans3: var(--to-right);
+}
+
+.wrap_card .card:nth-child(2) {
+  --order: 3;
+  --bg: radial-gradient(circle, rgba(142, 249, 252, 1) 0%, rgba(32, 164, 246, 1) 40%, rgba(8, 81, 192, 1) 100%);
+  --z1: 0;
+  --t1: var(--t-card);
+  --l1: var(--x2);
+  --r1: var(--x1);
+  --trans1: var(--to-right);
+  --z2: 2;
+  --t2: 0;
+  --l2: var(--to-center);
+  --r2: var(--to-center);
+  --trans2: rotate(calc(var(--rotate-card) * 0));
+  --z3: 0;
+  --t3: var(--t-card);
+  --l3: var(--x1);
+  --r3: var(--x2);
+  --trans3: var(--to-left);
+}
+
+.wrap_card .card:nth-child(3) {
+  --order: 1;
+  --bg: radial-gradient(circle, rgba(222, 128, 233, 1) 0%, rgba(213, 32, 246, 1) 40%, rgba(139, 6, 157, 1) 100%);
+  --z1: 0;
+  --t1: var(--t-card);
+  --l1: var(--x1);
+  --r1: var(--x2);
+  --trans1: var(--to-left);
+  --z2: 0;
+  --t2: var(--t-card);
+  --l2: var(--x2);
+  --r2: var(--x1);
+  --trans2: var(--to-right);
+  --z3: 2;
+  --t3: 0;
+  --l3: var(--to-center);
+  --r3: var(--to-center);
+  --trans3: rotate(calc(var(--rotate-card) * 0));
+}
+
+@keyframes rotating {
+  0%,
+  99.99% {
+    z-index: var(--z1);
+    top: var(--t1);
+    left: var(--l1);
+    right: var(--r1);
+    transform: var(--trans1);
+  }
+  33.33% {
+    z-index: var(--z2);
+    top: var(--t2);
+    left: var(--l2);
+    right: var(--r2);
+    transform: var(--trans2);
+  }
+  66.66% {
+    z-index: var(--z3);
+    top: var(--t3);
+    left: var(--l3);
+    right: var(--r3);
+    transform: var(--trans3);
+  }
+}
+
+.wrap_card .lines {
+  position: absolute;
+  inset: auto 0 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+}
+
+.wrap_card .lines::after {
+  content: "";
+  width: 100%;
+  height: 0px;
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  --mask-bg: #e8e8e8;
+  background: var(--mask-bg);
+  mask-image: radial-gradient(50% 200px at top, transparent 20%, var(--mask-bg));
+}
+
+.wrap_card .line {
+  position: absolute;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrap_card .line::before,
+.wrap_card .line::after {
+  content: "";
+  position: absolute;
+  inset: auto;
+  background: linear-gradient(
+    to right,
+    var(--gradient-a-line, #0000),
+    var(--gradient-b-line, #0000),
+    var(--gradient-c-line, #0000)
+  );
+  filter: var(--blur-line);
+  width: var(--w-line);
+  height: var(--h-line);
+}
+
+.wrap_card .line:nth-child(1)::before {
+  --blur-line: blur(4px);
+  --w-line: 100%;
+  --h-line: 5px;
+  --gradient-b-line: #2f69f2;
+}
+
+.wrap_card .line:nth-child(1)::after {
+  --w-line: 100%;
+  --h-line: 1px;
+  --gradient-b-line: #6366f1;
+}
+
+.wrap_card .line:nth-child(2)::before {
+  --blur-line: blur(4px);
+  --w-line: 50%;
+  --h-line: 5px;
+  --gradient-b-line: #84ccfc;
+}
+
+.wrap_card .line:nth-child(2)::after {
+  --w-line: 50%;
+  --h-line: 1px;
+  --gradient-b-line: #14d3f5;
+}
+
+.card-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+}
+
+.wrap_card .icon {
+  display: block;
+}
+
+/* Player info overlaid on each rotating card */
+.card-info {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 3;
   display: grid;
   justify-items: center;
-  gap: 3px;
-  padding: 14px 10px 12px;
-  border: 1px solid #eef0f5;
-  border-radius: 12px;
-  background: #fcfcfe;
+  gap: 1px;
+  padding: 10px 8px 12px;
   text-align: center;
+  pointer-events: none;
 }
 
-.podium-card.is-first {
-  border-color: #e6dcae;
-  background: linear-gradient(180deg, #fffdf3 0%, #fffefb 100%);
+.card-info::before {
+  content: "";
+  position: absolute;
+  inset: -16px -20px 0;
+  z-index: -1;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.36) 0%, rgba(0, 0, 0, 0.16) 55%, rgba(0, 0, 0, 0) 100%);
 }
 
-.podium-card.is-second {
-  border-color: #e2e5ec;
-  background: linear-gradient(180deg, #fafbfd 0%, #fff 100%);
-}
-
-.podium-card.is-third {
-  border-color: #f0e0d2;
-  background: linear-gradient(180deg, #fffaf6 0%, #fff 100%);
-}
-
-.podium-medal {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
-  border-radius: 50%;
-  background: #eeecff;
-  color: var(--purple);
-  font-family: "Inter", sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.podium-card.is-first .podium-medal {
-  background: #fdf3d3;
-  color: #b58a12;
-}
-
-.podium-card.is-second .podium-medal {
-  background: #eef0f4;
-  color: #7c8494;
-}
-
-.podium-card.is-third .podium-medal {
-  background: #f8e9dd;
-  color: #a9713f;
-}
-
-.podium-name {
+.card-name {
   overflow: hidden;
   max-width: 100%;
-  color: var(--ink);
+  color: #fff;
   font-family: "IBM Plex Sans Thai", sans-serif;
   font-size: 12px;
   font-weight: 600;
   text-overflow: ellipsis;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
   white-space: nowrap;
 }
 
-.podium-score {
-  color: var(--purple);
+.card-score {
+  color: #fff;
   font-family: "Inter", sans-serif;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.1;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
 }
 
-.podium-meta {
-  color: #9a9eac;
+.card-meta {
+  color: rgba(255, 255, 255, 0.95);
   font-family: "IBM Plex Sans Thai", sans-serif;
   font-size: 9px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wrap_card .card {
+    animation: none;
+  }
 }
 
 .leaderboard-table-wrap {
@@ -1776,16 +2014,24 @@ p {
     padding: 22px 15px 20px;
   }
 
-  .podium {
-    gap: 7px;
+  .wrap_card {
+    --w-card: 108px;
+    --h-card: 144px;
+    --insetX-card: 20px;
+    max-width: 100%;
+    margin-bottom: 14px;
   }
 
-  .podium-card {
-    padding: 11px 7px 10px;
-  }
-
-  .podium-name {
+  .card-name {
     font-size: 11px;
+  }
+
+  .card-score {
+    font-size: 17px;
+  }
+
+  .card-meta {
+    font-size: 8px;
   }
 
   .leaderboard-table th,
@@ -1905,6 +2151,24 @@ p {
 
 /* Very narrow screens: give each operand a full-width row so digits are not clipped */
 @media (max-width: 300px) {
+  .wrap_card {
+    --w-card: 84px;
+    --h-card: 112px;
+    --insetX-card: 14px;
+  }
+
+  .card-name {
+    font-size: 10px;
+  }
+
+  .card-score {
+    font-size: 15px;
+  }
+
+  .card-meta {
+    font-size: 7px;
+  }
+
   .tab-button {
     padding: 9px 4px;
     font-size: 10px;
