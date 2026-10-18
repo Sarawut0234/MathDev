@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="เครื่องมือแปลงและคำนวณเลขฐาน 2 ถึง 36 บวก ลบ คูณ หาร พร้อมแสดงวิธีคิดทีละขั้นตอน"
+    />
+    <meta name="theme-color" content="#f7f8fc" />
+    <title>แปลงและคำนวณเลขฐาน — Number Base Converter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/style.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="แปลงเลขฐาน หน้าแรก">
+          <span class="brand-mark" aria-hidden="true">10</span>
+          <span>เลขฐาน<span class="brand-dot">.</span></span>
+        </a>
+        <span class="topbar-note"><span class="status-dot"></span> <span class="topbar-note-text">เครื่องมือคณิตศาสตร์</span></span>
+      </header>
+
+      <section class="hero" aria-labelledby="page-title">
+        <span class="eyebrow"><span class="eyebrow-line"></span> NUMBER SYSTEMS, MADE SIMPLE</span>
+        <h1 id="page-title">แปลงและคำนวณเลขฐาน<br class="mobile-break" />ได้ในไม่กี่วินาที</h1>
+        <p class="hero-copy">แปลง บวก ลบ คูณ หาร ตัวเลขในฐานต่าง ๆ พร้อมดูวิธีคิดทีละขั้นตอน</p>
+      </section>
+
+      <div class="tabs" role="tablist" aria-label="เลือกโหมดการทำงาน">
+        <button
+          class="tab-button is-active"
+          id="tab-convert"
+          type="button"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-convert"
+          data-tab="convert"
+        >
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7h11m0 0-3-3m3 3-3 3M16 13H5m0 0 3 3m-3-3 3-3" /></svg>
+          แปลงฐาน
+        </button>
+        <button
+          class="tab-button"
+          id="tab-calc"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-calc"
+          data-tab="calc"
+        >
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3v14M3 6h6M12 6h5M12 10h5M12 14h5" /></svg>
+          คำนวณ
+        </button>
+        <button
+          class="tab-button"
+          id="tab-practice"
+          type="button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-practice"
+          data-tab="practice"
+        >
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.5 12 8l4.5.4-3.4 3 1 4.4-4.1-2.4-4.1 2.4 1-4.4-3.4-3L8 8z" /></svg>
+          แบบฝึกหัด
+        </button>
+      </div>
+
+      <section
+        class="converter-card convert-panel"
+        id="panel-convert"
+        role="tabpanel"
+        aria-labelledby="tab-convert"
+        aria-label="เครื่องมือแปลงเลขฐาน"
+        data-panel="convert"
+      >
+        <div class="card-heading">
+          <div>
+            <h2>ตัวแปลงเลขฐาน</h2>
+            <p>รองรับจำนวนเต็มตั้งแต่ฐาน 2 ถึงฐาน 36</p>
+          </div>
+          <span class="precision-badge"><span aria-hidden="true">✳</span> คำนวณแม่นยำ</span>
+        </div>
+
+        <form id="converter-form" novalidate>
+          <div class="conversion-row">
+            <label class="field-group" for="number-input">
+              <span class="field-label">ตัวเลขที่ต้องการแปลง</span>
+              <span class="input-wrap">
+                <input
+                  id="number-input"
+                  name="number"
+                  type="text"
+                  inputmode="text"
+                  autocomplete="off"
+                  spellcheck="false"
+                  placeholder="เช่น 101101"
+                  value="101101"
+                  aria-describedby="input-hint error-message"
+                />
+                <span class="input-suffix" id="input-hint">เลขฐาน 2</span>
+              </span>
+            </label>
+
+            <button class="swap-button" id="swap-button" type="button" aria-label="สลับฐานต้นทางและปลายทาง" title="สลับฐาน">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M7 7h13m0 0-3-3m3 3-3 3M17 17H4m0 0 3 3m-3-3 3-3" />
+              </svg>
+            </button>
+
+            <label class="field-group" for="to-base">
+              <span class="field-label">แปลงเป็น</span>
+              <span class="select-wrap">
+                <select id="to-base" name="to-base">
+                  <option value="2">ฐาน 2 · Binary</option>
+                  <option value="8">ฐาน 8 · Octal</option>
+                  <option value="10" selected>ฐาน 10 · Decimal</option>
+                  <option value="16">ฐาน 16 · Hexadecimal</option>
+                  <option value="custom">กำหนดเอง…</option>
+                </select>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+              </span>
+            </label>
+          </div>
+
+          <div class="base-controls">
+            <label class="base-picker" for="from-base">
+              <span>ฐานต้นทาง</span>
+              <span class="number-select">
+                <span>ฐาน</span>
+                <input id="from-base" type="number" min="2" max="36" value="2" aria-label="ฐานต้นทาง" />
+              </span>
+            </label>
+            <label class="base-picker" for="custom-base" id="custom-base-control" hidden>
+              <span>ฐานปลายทาง</span>
+              <span class="number-select">
+                <span>ฐาน</span>
+                <input id="custom-base" type="number" min="2" max="36" value="3" aria-label="ฐานปลายทาง" />
+              </span>
+            </label>
+            <span class="base-range">ใช้ตัวเลข 0–9 และตัวอักษร A–Z</span>
+          </div>
+
+          <p class="error-message" id="error-message" role="alert" hidden></p>
+          <button class="convert-button" type="submit">
+            แปลงเลขฐาน
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m0 0-5-5m5 5-5 5" /></svg>
+          </button>
+        </form>
+
+        <section class="result-panel" id="result-panel" aria-live="polite">
+          <div class="result-topline">
+            <span class="result-label"><span class="result-icon" aria-hidden="true">↳</span> ผลลัพธ์</span>
+            <button class="copy-button" id="copy-button" type="button" aria-label="คัดลอกผลลัพธ์">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="7" width="9" height="10" rx="2" /><path d="M13 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2" /></svg>
+              <span>คัดลอก</span>
+            </button>
+          </div>
+          <div class="result-value" id="result-value">45</div>
+          <div class="result-meta" id="result-meta">ฐาน 10 <span>·</span> Decimal</div>
+        </section>
+      </section>
+
+      <section class="steps-card convert-panel" data-panel="convert" aria-labelledby="steps-title">
+        <div class="steps-heading">
+          <span class="steps-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M3.5 6h.01M3.5 12h.01M3.5 18h.01" /></svg>
+          </span>
+          <div>
+            <h2 id="steps-title">วิธีคิด</h2>
+            <p id="steps-subtitle">แปลงจากฐาน 2 เป็นฐาน 10</p>
+          </div>
+          <span class="steps-tag">ทีละขั้นตอน</span>
+        </div>
+        <div class="steps-content" id="steps-content"></div>
+      </section>
+
+      <section
+        class="converter-card calc-panel"
+        id="panel-calc"
+        role="tabpanel"
+        aria-labelledby="tab-calc"
+        data-panel="calc"
+        hidden
+      >
+        <div class="card-heading">
+          <div>
+            <h2>เครื่องคิดเลขฐาน</h2>
+            <p>บวก ลบ คูณ หาร ตัวเลขในฐานเดียวกัน</p>
+          </div>
+          <span class="precision-badge"><span aria-hidden="true">✳</span> คำนวณแม่นยำ</span>
+        </div>
+
+        <form id="calc-form" novalidate>
+          <div class="calc-operand-row">
+            <label class="field-group" for="calc-a">
+              <span class="field-label">ตัวเลขที่ 1</span>
+              <span class="input-wrap">
+                <input
+                  id="calc-a"
+                  type="text"
+                  inputmode="text"
+                  autocomplete="off"
+                  spellcheck="false"
+                  placeholder="เช่น 1011"
+                  value="1011"
+                />
+              </span>
+            </label>
+
+            <label class="field-group" for="calc-operator">
+              <span class="field-label">เครื่องหมาย</span>
+              <span class="select-wrap operator-wrap">
+                <select id="calc-operator" aria-label="เลือกการดำเนินการ">
+                  <option value="+" selected>+ บวก</option>
+                  <option value="−">− ลบ</option>
+                  <option value="×">× คูณ</option>
+                  <option value="÷">÷ หาร</option>
+                </select>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+              </span>
+            </label>
+
+            <label class="field-group" for="calc-b">
+              <span class="field-label">ตัวเลขที่ 2</span>
+              <span class="input-wrap">
+                <input
+                  id="calc-b"
+                  type="text"
+                  inputmode="text"
+                  autocomplete="off"
+                  spellcheck="false"
+                  placeholder="เช่น 110"
+                  value="110"
+                />
+              </span>
+            </label>
+          </div>
+
+          <div class="base-controls">
+            <label class="base-picker" for="calc-base">
+              <span>ฐานที่ใช้คำนวณ</span>
+              <span class="number-select">
+                <span>ฐาน</span>
+                <input id="calc-base" type="number" min="2" max="36" value="2" aria-label="ฐานที่ใช้คำนวณ" />
+              </span>
+            </label>
+            <span class="base-range">ผลลัพธ์แสดงในฐานเดียวกัน</span>
+          </div>
+
+          <p class="error-message" id="calc-error" role="alert" hidden></p>
+          <button class="convert-button" type="submit">
+            คำนวณ
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m0 0-5-5m5 5-5 5" /></svg>
+          </button>
+        </form>
+
+        <section class="result-panel" aria-live="polite">
+          <div class="result-topline">
+            <span class="result-label"><span class="result-icon" aria-hidden="true">↳</span> ผลลัพธ์</span>
+            <button class="copy-button" id="calc-copy-button" type="button" aria-label="คัดลอกผลลัพธ์การคำนวณ">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="7" width="9" height="10" rx="2" /><path d="M13 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2" /></svg>
+              <span>คัดลอก</span>
+            </button>
+          </div>
+          <div class="result-value" id="calc-result">10001</div>
+          <div class="result-meta" id="calc-result-meta">ฐาน 2 <span>·</span> Binary</div>
+        </section>
+      </section>
+
+      <section
+        class="steps-card calc-panel"
+        id="calc-steps-card"
+        data-panel="calc"
+        aria-labelledby="calc-steps-title"
+        hidden
+      >
+        <div class="steps-heading">
+          <span class="steps-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M3.5 6h.01M3.5 12h.01M3.5 18h.01" /></svg>
+          </span>
+          <div>
+            <h2 id="calc-steps-title">วิธีคิด</h2>
+            <p id="calc-steps-subtitle">บวกในฐาน 2</p>
+          </div>
+          <span class="steps-tag">ทีละขั้นตอน</span>
+        </div>
+        <div class="steps-content" id="calc-steps-content"></div>
+      </section>
+
+      <section
+        class="converter-card practice-panel"
+        id="panel-practice"
+        role="tabpanel"
+        aria-labelledby="tab-practice"
+        data-panel="practice"
+        hidden
+      >
+        <div class="card-heading">
+          <div>
+            <h2>แบบฝึกหัด</h2>
+            <p>เลือกประเภทโจทย์แล้วกดสุ่มโจทย์ได้ไม่จำกัด</p>
+          </div>
+          <span class="precision-badge"><span aria-hidden="true">✳</span> ฝึกได้ไม่จำกัด</span>
+        </div>
+
+        <div class="practice-setup">
+          <fieldset class="practice-group">
+            <legend>ประเภทโจทย์</legend>
+            <div class="practice-options" id="practice-types">
+              <label class="practice-option">
+                <input type="radio" name="practice-type" value="convert" checked />
+                <span><strong>แปลงฐาน</strong><small>เปลี่ยนเลขให้เป็นอีกฐานหนึ่ง</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-type" value="add" />
+                <span><strong>บวก</strong><small>หาผลบวกในฐานเดียวกัน</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-type" value="subtract" />
+                <span><strong>ลบ</strong><small>หาผลลบในฐานเดียวกัน</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-type" value="multiply" />
+                <span><strong>คูณ</strong><small>หาผลคูณในฐานเดียวกัน</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-type" value="divide" />
+                <span><strong>หาร</strong><small>หาผลหารและเศษ</small></span>
+              </label>
+              <label class="practice-option">
+                <input type="radio" name="practice-type" value="mixed" />
+                <span><strong>อิสระ</strong><small>สุ่มทุกแบบคละกัน</small></span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="practice-filters">
+            <label class="base-picker" for="practice-base">
+              <span>ฐานที่ใช้</span>
+              <span class="select-wrap practice-select">
+                <select id="practice-base">
+                  <option value="2" selected>ฐาน 2 · Binary</option>
+                  <option value="8">ฐาน 8 · Octal</option>
+                  <option value="10">ฐาน 10 · Decimal</option>
+                  <option value="16">ฐาน 16 · Hexadecimal</option>
+                  <option value="mixed">คละฐาน (2, 8, 10, 16)</option>
+                </select>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+              </span>
+            </label>
+
+            <label class="base-picker" for="practice-level">
+              <span>ระดับความยาก</span>
+              <span class="select-wrap practice-select">
+                <select id="practice-level">
+                  <option value="easy">ง่าย · ตัวเลขสั้น</option>
+                  <option value="medium" selected>ปานกลาง</option>
+                  <option value="hard">ยาก · ตัวเลขยาว</option>
+                </select>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg>
+              </span>
+            </label>
+          </div>
+
+          <button class="convert-button" id="practice-new" type="button">
+            สุ่มโจทย์ใหม่
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m0 0-5-5m5 5-5 5" /></svg>
+          </button>
+        </div>
+
+        <section class="question-card" aria-live="polite">
+          <div class="question-topline">
+            <span class="question-tag" id="practice-tag">แปลงฐาน</span>
+            <span class="question-count" id="practice-count">ข้อที่ 1</span>
+          </div>
+          <p class="question-text" id="practice-question">กำลังสร้างโจทย์…</p>
+          <p class="question-hint" id="practice-hint"></p>
+          <div class="question-detail" id="practice-detail"></div>
+
+          <form id="practice-form" novalidate>
+            <label class="field-group" for="practice-answer">
+              <span class="field-label">คำตอบของคุณ</span>
+              <span class="input-wrap">
+                <input
+                  id="practice-answer"
+                  type="text"
+                  inputmode="text"
+                  autocomplete="off"
+                  spellcheck="false"
+                  placeholder="พิมพ์คำตอบที่นี่"
+                />
+              </span>
+            </label>
+            <p class="error-message" id="practice-error" role="alert" hidden></p>
+            <div class="practice-actions">
+              <button class="convert-button" type="submit">ตรวจคำตอบ</button>
+              <button class="ghost-button" id="practice-skip" type="button">ข้ามข้อนี้</button>
+            </div>
+          </form>
+
+          <div class="feedback" id="practice-feedback" hidden></div>
+        </section>
+
+        <div class="scoreboard">
+          <div class="score-item">
+            <span class="score-value" id="score-correct">0</span>
+            <span class="score-label">ตอบถูก</span>
+          </div>
+          <div class="score-item">
+            <span class="score-value" id="score-wrong">0</span>
+            <span class="score-label">ตอบผิด</span>
+          </div>
+          <div class="score-item">
+            <span class="score-value" id="score-streak">0</span>
+            <span class="score-label">ตอบถูกติดกัน</span>
+          </div>
+          <button class="ghost-button score-reset" id="practice-reset" type="button">ล้างคะแนน</button>
+        </div>
+      </section>
+
+      <section
+        class="steps-card practice-panel"
+        id="practice-steps-card"
+        data-panel="practice"
+        aria-labelledby="practice-steps-title"
+        hidden
+      >
+        <div class="steps-heading">
+          <span class="steps-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M3.5 6h.01M3.5 12h.01M3.5 18h.01" /></svg>
+          </span>
+          <div>
+            <h2 id="practice-steps-title">วิธีคิด</h2>
+            <p id="practice-steps-subtitle">จะแสดงหลังตรวจคำตอบ</p>
+          </div>
+          <span class="steps-tag">ทีละขั้นตอน</span>
+        </div>
+        <div class="steps-content" id="practice-steps-content"></div>
+      </section>
+
+      <section class="quick-guide" aria-label="ข้อมูลเกี่ยวกับเลขฐาน">
+        <div class="guide-heading">
+          <span class="guide-spark" aria-hidden="true">✳</span>
+          <h2>เลขฐานยอดนิยม</h2>
+        </div>
+        <div class="base-chips">
+          <button class="base-chip" type="button" data-from="2" data-to="10">
+            <span class="chip-number">02</span><span><strong>ฐานสอง</strong><small>Binary · 0, 1</small></span>
+          </button>
+          <button class="base-chip" type="button" data-from="8" data-to="10">
+            <span class="chip-number">08</span><span><strong>ฐานแปด</strong><small>Octal · 0–7</small></span>
+          </button>
+          <button class="base-chip" type="button" data-from="10" data-to="2">
+            <span class="chip-number">10</span><span><strong>ฐานสิบ</strong><small>Decimal · 0–9</small></span>
+          </button>
+          <button class="base-chip" type="button" data-from="16" data-to="10">
+            <span class="chip-number">16</span><span><strong>ฐานสิบหก</strong><small>Hex · 0–9, A–F</small></span>
+          </button>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span>สร้างมาเพื่อให้เรื่องเลขฐานเข้าใจง่ายขึ้น</span>
+        <span>เลขฐาน<span class="brand-dot">.</span> <span id="footer-year"></span></span>
+      </footer>
+    </main>
+  </body>
+</html>

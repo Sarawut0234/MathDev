@@ -1,0 +1,9 @@
+{
+  "name": "base-converter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Thai number base converter",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
