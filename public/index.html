@@ -318,9 +318,9 @@
         <div class="card-heading">
           <div>
             <h2>แบบฝึกหัด</h2>
-            <p>เลือกประเภทโจทย์แล้วกดสุ่มโจทย์ได้ไม่จำกัด</p>
+            <p>เลือกประเภทโจทย์ แล้วกดสุ่มโจทย์เพื่อเริ่มชุด 10 ข้อ</p>
           </div>
-          <span class="precision-badge"><span aria-hidden="true">✳</span> ฝึกได้ไม่จำกัด</span>
+          <span class="precision-badge"><span aria-hidden="true">✳</span> ชุดละ 10 ข้อ</span>
         </div>
 
         <section class="name-gate" id="practice-gate">
@@ -417,7 +417,7 @@
           </div>
 
           <button class="convert-button" id="practice-new" type="button">
-            สุ่มโจทย์ใหม่
+            สุ่มโจทย์ 10 ข้อ
             <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m0 0-5-5m5 5-5 5" /></svg>
           </button>
         </div>
@@ -425,7 +425,16 @@
         <section class="question-card" aria-live="polite">
           <div class="question-topline">
             <span class="question-tag" id="practice-tag">แปลงฐาน</span>
-            <span class="question-count" id="practice-count">ข้อที่ 1</span>
+            <span class="question-count" id="practice-count">ข้อที่ 1 / 10</span>
+          </div>
+          <div class="set-progress" id="practice-progress" hidden>
+            <div class="set-progress-head">
+              <span class="set-progress-label">ความคืบหน้าของชุด</span>
+              <span class="set-progress-value" id="practice-progress-value">0 / 10</span>
+            </div>
+            <div class="set-progress-track" role="progressbar" aria-labelledby="practice-progress-value" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0">
+              <span class="set-progress-fill" id="practice-progress-fill"></span>
+            </div>
           </div>
           <div class="timer" id="practice-timer">
             <div class="timer-head">
@@ -460,7 +469,7 @@
             <p class="error-message" id="practice-error" role="alert" hidden></p>
             <div class="practice-actions">
               <button class="convert-button" type="submit">ตรวจคำตอบ</button>
-              <button class="ghost-button" id="practice-skip" type="button">ข้ามข้อนี้</button>
+              <button class="ghost-button" id="practice-skip" type="button" hidden>ข้ามข้อนี้</button>
             </div>
             <button class="convert-button next-button" id="practice-next" type="button" hidden>
               ข้อถัดไป
@@ -469,6 +478,40 @@
           </form>
 
           <div class="feedback" id="practice-feedback" hidden></div>
+        </section>
+
+        <section class="set-summary" id="practice-summary" hidden aria-live="polite">
+          <span class="set-summary-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 13.5 9.5 18 19 7" /></svg>
+          </span>
+          <h3>สรุปผลชุดนี้</h3>
+          <p class="set-summary-name" id="summary-name">ผู้ฝึก</p>
+          <div class="set-summary-grid">
+            <div class="summary-item">
+              <span class="summary-value" id="summary-correct">0</span>
+              <span class="summary-label">ตอบถูก</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-value" id="summary-wrong">0</span>
+              <span class="summary-label">ตอบผิด</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-value" id="summary-total">00:00</span>
+              <span class="summary-label">เวลารวม</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-value" id="summary-average">00:00</span>
+              <span class="summary-label">เวลาเฉลี่ย/ข้อ</span>
+            </div>
+          </div>
+          <p class="set-summary-note" id="summary-note"></p>
+          <div class="set-summary-actions">
+            <button class="convert-button" id="summary-again" type="button">
+              เริ่มชุดใหม่ 10 ข้อ
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m0 0-5-5m5 5-5 5" /></svg>
+            </button>
+            <button class="ghost-button" id="summary-leaderboard" type="button">ดูตารางจัดอันดับ</button>
+          </div>
         </section>
 
         <div class="scoreboard">
@@ -484,7 +527,7 @@
             <span class="score-value" id="score-streak">0</span>
             <span class="score-label">ตอบถูกติดกัน</span>
           </div>
-          <button class="ghost-button score-reset" id="practice-reset" type="button">ล้างคะแนน</button>
+          <button class="ghost-button score-reset" id="practice-reset" type="button">เริ่มชุดใหม่</button>
         </div>
         </div>
       </section>
@@ -524,10 +567,6 @@
         </div>
 
         <p class="leaderboard-empty" id="leaderboard-empty">ยังไม่มีคะแนน — ไปที่แท็บแบบฝึกหัดเพื่อเริ่มฝึกได้เลย</p>
-
-        <div class="leaderboard-actions">
-          <button class="ghost-button" id="leaderboard-clear" type="button">ล้างตารางอันดับ</button>
-        </div>
       </section>
 
       <section

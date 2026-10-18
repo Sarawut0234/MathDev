@@ -478,10 +478,22 @@ const practiceTimer = document.querySelector("#practice-timer");
 const practiceTimerValue = document.querySelector("#practice-timer-value");
 const practiceTimerFill = document.querySelector("#practice-timer-fill");
 const practiceTimerTrack = document.querySelector(".timer-track");
+const practiceProgress = document.querySelector("#practice-progress");
+const practiceProgressValue = document.querySelector("#practice-progress-value");
+const practiceProgressFill = document.querySelector("#practice-progress-fill");
+const practiceProgressTrack = document.querySelector(".set-progress-track");
+const practiceSummary = document.querySelector("#practice-summary");
+const summaryName = document.querySelector("#summary-name");
+const summaryCorrect = document.querySelector("#summary-correct");
+const summaryWrong = document.querySelector("#summary-wrong");
+const summaryTotal = document.querySelector("#summary-total");
+const summaryAverage = document.querySelector("#summary-average");
+const summaryNote = document.querySelector("#summary-note");
+const summaryAgain = document.querySelector("#summary-again");
+const summaryLeaderboard = document.querySelector("#summary-leaderboard");
 const leaderboardPodium = document.querySelector("#leaderboard-podium");
 const leaderboardBody = document.querySelector("#leaderboard-body");
 const leaderboardEmpty = document.querySelector("#leaderboard-empty");
-const leaderboardClear = document.querySelector("#leaderboard-clear");
 
 const practiceTypeNames = {
   convert: "แปลงฐาน",
@@ -511,9 +523,15 @@ const practiceState = {
   timerId: null,
   timedOut: false,
   entryId: "",
+  queue: [],
+  retry: [],
+  round: 1,
+  finished: false,
 };
 
 const QUESTION_SECONDS = 300;
+const SET_SIZE = 10;
+const MAX_ROUNDS = 3;
 const LEADERBOARD_KEY = "mathdev.leaderboard.v1";
 const PLAYER_KEY = "mathdev.player.v1";
 
@@ -729,6 +747,7 @@ function handleTimeUp() {
   practiceState.wrong += 1;
   practiceState.streak = 0;
   updateScoreboard();
+  renderSetProgress();
   practiceFeedback.className = "feedback is-wrong";
   practiceFeedback.innerHTML = `<strong>หมดเวลา</strong> คำตอบที่ถูกคือ <span class="mono">${practiceState.question.answer}</span>`;
   practiceFeedback.hidden = false;
@@ -740,7 +759,9 @@ function handleTimeUp() {
 function renderPracticeQuestion() {
   const question = practiceState.question;
   practiceTag.textContent = practiceTypeNames[question.type];
-  practiceCount.textContent = `ข้อที่ ${practiceState.index}`;
+  practiceCount.textContent = practiceState.round > 1
+    ? `ทบทวนรอบ ${practiceState.round} · ข้อที่ ${practiceState.index}`
+    : `ข้อที่ ${practiceState.index} / ${SET_SIZE}`;
   practiceQuestion.innerHTML = question.prompt;
   practiceHint.textContent = question.hint;
   practiceDetail.innerHTML = question.detail || "";
@@ -752,16 +773,111 @@ function renderPracticeQuestion() {
   practiceStepsSubtitle.textContent = "จะแสดงหลังตรวจคำตอบ";
   practiceStepsCard.hidden = true;
   practiceNextButton.hidden = true;
+  practiceSkipButton.hidden = true;
   practiceState.answered = false;
   startTimer();
+}
+
+function renderSetProgress() {
+  const done = practiceState.correct + practiceState.wrong;
+  practiceProgressValue.textContent = `${done} / ${SET_SIZE}`;
+  practiceProgressFill.style.width = `${(done / SET_SIZE) * 100}%`;
+  practiceProgressTrack.setAttribute("aria-valuenow", String(done));
+}
+
+function buildQuestionSet() {
+  const set = [];
+  for (let index = 0; index < SET_SIZE; index += 1) {
+    set.push({ ...buildPracticeQuestion(), solved: false });
+  }
+  return set;
+}
+
+function startSet() {
+  practiceState.queue = buildQuestionSet();
+  practiceState.retry = [];
+  practiceState.round = 1;
+  practiceState.finished = false;
+  practiceState.correct = 0;
+  practiceState.wrong = 0;
+  practiceState.streak = 0;
+  practiceState.index = 0;
+  practiceState.totalSeconds = 0;
+  practiceState.entryId = "";
+  practiceSummary.hidden = true;
+  practiceProgress.hidden = false;
+  updateScoreboard();
+  renderSetProgress();
+  newPracticeQuestion();
+}
+
+function finishSet() {
+  stopTimer();
+  practiceState.finished = true;
+  practiceState.totalSeconds += practiceState.elapsed;
+  practiceState.elapsed = 0;
+  practiceState.question = null;
+  practiceNextButton.hidden = true;
+  practiceSkipButton.hidden = true;
+  practiceAnswer.value = "";
+  practiceFeedback.hidden = true;
+  practiceStepsCard.hidden = true;
+  practiceProgress.hidden = true;
+  practiceTimer.hidden = true;
+
+  const answered = practiceState.correct + practiceState.wrong;
+  const total = practiceState.totalSeconds;
+  const missed = SET_SIZE - practiceState.correct;
+  summaryName.textContent = practiceState.player;
+  summaryCorrect.textContent = practiceState.correct;
+  summaryWrong.textContent = practiceState.wrong;
+  summaryTotal.textContent = formatClock(total);
+  summaryAverage.textContent = formatClock(answered > 0 ? total / answered : 0);
+  summaryNote.textContent = missed === 0
+    ? `ทำครบ ${SET_SIZE} ข้อ ถูกทั้งหมด ใช้เวลารวม ${formatClock(total)}`
+    : `ทำครบ ${SET_SIZE} ข้อ ยังเหลือ ${missed} ข้อที่ยังตอบไม่ถูก ใช้เวลารวม ${formatClock(total)}`;
+  practiceSummary.hidden = false;
+  saveScore();
+  practiceSummary.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function newPracticeQuestion() {
   practiceState.totalSeconds += practiceState.elapsed;
   practiceState.index += 1;
-  practiceState.question = buildPracticeQuestion();
+  practiceState.question = practiceState.queue.shift();
+  practiceTimer.hidden = false;
   renderPracticeQuestion();
   practiceAnswer.focus();
+}
+
+function advanceSet() {
+  const current = practiceState.question;
+  const hasNextRound = practiceState.round < MAX_ROUNDS;
+  if (current && !current.solved && hasNextRound) {
+    practiceState.retry.push(current);
+  }
+  practiceState.question = null;
+
+  if (practiceState.queue.length > 0) {
+    newPracticeQuestion();
+    return;
+  }
+  if (practiceState.retry.length > 0) {
+    practiceState.round += 1;
+    practiceState.queue = practiceState.retry;
+    practiceState.retry = [];
+    newPracticeQuestion();
+    return;
+  }
+  finishSet();
+}
+
+function skipQuestion() {
+  if (!practiceState.question) return;
+  stopTimer();
+  practiceState.totalSeconds += practiceState.elapsed;
+  practiceState.elapsed = 0;
+  advanceSet();
 }
 
 function renderPracticeSteps(question) {
@@ -867,6 +983,7 @@ function checkPracticeAnswer() {
   if (isCorrect) {
     practiceState.correct += 1;
     practiceState.streak += 1;
+    question.solved = true;
     practiceFeedback.className = "feedback is-correct";
     practiceFeedback.innerHTML = `<strong>ถูกต้อง!</strong> คำตอบคือ <span class="mono">${question.answer}</span>`;
     practiceNextButton.hidden = false;
@@ -875,10 +992,12 @@ function checkPracticeAnswer() {
     practiceState.streak = 0;
     practiceFeedback.className = "feedback is-wrong";
     practiceFeedback.innerHTML = `<strong>ยังไม่ถูก</strong> คำตอบที่ถูกคือ <span class="mono">${question.answer}</span>`;
+    practiceSkipButton.hidden = false;
   }
 
   practiceFeedback.hidden = false;
   updateScoreboard();
+  renderSetProgress();
   renderPracticeSteps(question);
   practiceStepsCard.hidden = false;
 }
@@ -924,7 +1043,6 @@ function saveScore() {
   writeLeaderboard(entries.slice(0, 50));
   renderLeaderboard();
 }
-
 function renderLeaderboard() {
   const entries = readLeaderboard()
     .sort((a, b) => b.correct - a.correct || a.averageSeconds - b.averageSeconds)
@@ -974,17 +1092,10 @@ function escapeHtml(value) {
 
 function startPractice(name) {
   practiceState.player = name;
-  practiceState.correct = 0;
-  practiceState.wrong = 0;
-  practiceState.streak = 0;
-  practiceState.index = 0;
-  practiceState.totalSeconds = 0;
-  practiceState.entryId = "";
   practicePlayerName.textContent = name;
   practiceGate.hidden = true;
   practiceBody.hidden = false;
-  updateScoreboard();
-  newPracticeQuestion();
+  startSet();
 }
 
 practiceNameForm.addEventListener("submit", (event) => {
@@ -1019,32 +1130,20 @@ practiceForm.addEventListener("submit", (event) => {
   checkPracticeAnswer();
 });
 
-practiceNewButton.addEventListener("click", newPracticeQuestion);
-practiceSkipButton.addEventListener("click", newPracticeQuestion);
-practiceNextButton.addEventListener("click", newPracticeQuestion);
+practiceNewButton.addEventListener("click", startSet);
+practiceSkipButton.addEventListener("click", skipQuestion);
+practiceNextButton.addEventListener("click", advanceSet);
+summaryAgain.addEventListener("click", startSet);
+summaryLeaderboard.addEventListener("click", () => activateTab("leaderboard"));
 
-practiceResetButton.addEventListener("click", () => {
-  saveScore();
-  practiceState.correct = 0;
-  practiceState.wrong = 0;
-  practiceState.streak = 0;
-  practiceState.index = 0;
-  practiceState.totalSeconds = 0;
-  updateScoreboard();
-  newPracticeQuestion();
-});
-
-leaderboardClear.addEventListener("click", () => {
-  writeLeaderboard([]);
-  renderLeaderboard();
-});
+practiceResetButton.addEventListener("click", startSet);
 
 document.querySelectorAll('input[name="practice-type"]').forEach((input) => {
-  input.addEventListener("change", newPracticeQuestion);
+  input.addEventListener("change", startSet);
 });
 
-practiceBaseSelect.addEventListener("change", newPracticeQuestion);
-practiceLevelSelect.addEventListener("change", newPracticeQuestion);
+practiceBaseSelect.addEventListener("change", startSet);
+practiceLevelSelect.addEventListener("change", startSet);
 
 document.querySelector("#footer-year").textContent = new Date().getFullYear();
 tryConvert();
