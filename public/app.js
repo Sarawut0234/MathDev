@@ -401,6 +401,10 @@ function tryCalculate() {
 }
 
 function activateTab(name) {
+  if (name !== "practice" && practiceState.player) {
+    saveScore();
+    stopTimer();
+  }
   document.querySelectorAll(".tab-button").forEach((button) => {
     const isActive = button.dataset.tab === name;
     button.classList.toggle("is-active", isActive);
@@ -409,6 +413,10 @@ function activateTab(name) {
   document.querySelectorAll("[data-panel]").forEach((panel) => {
     panel.hidden = panel.dataset.panel !== name;
   });
+  if (name === "practice") {
+    practiceStepsCard.hidden = practiceStepsContent.innerHTML === "";
+  }
+  if (name === "leaderboard") renderLeaderboard();
 }
 
 document.querySelectorAll(".tab-button").forEach((button) => {
@@ -454,9 +462,26 @@ const practiceBaseSelect = document.querySelector("#practice-base");
 const practiceLevelSelect = document.querySelector("#practice-level");
 const practiceStepsSubtitle = document.querySelector("#practice-steps-subtitle");
 const practiceStepsContent = document.querySelector("#practice-steps-content");
+const practiceStepsCard = document.querySelector("#practice-steps-card");
 const scoreCorrect = document.querySelector("#score-correct");
 const scoreWrong = document.querySelector("#score-wrong");
 const scoreStreak = document.querySelector("#score-streak");
+const practiceGate = document.querySelector("#practice-gate");
+const practiceBody = document.querySelector("#practice-body");
+const practiceNameForm = document.querySelector("#practice-name-form");
+const practiceNameInput = document.querySelector("#practice-name");
+const practiceNameError = document.querySelector("#practice-name-error");
+const practicePlayerName = document.querySelector("#practice-player-name");
+const practiceChangeName = document.querySelector("#practice-change-name");
+const practiceNextButton = document.querySelector("#practice-next");
+const practiceTimer = document.querySelector("#practice-timer");
+const practiceTimerValue = document.querySelector("#practice-timer-value");
+const practiceTimerFill = document.querySelector("#practice-timer-fill");
+const practiceTimerTrack = document.querySelector(".timer-track");
+const leaderboardPodium = document.querySelector("#leaderboard-podium");
+const leaderboardBody = document.querySelector("#leaderboard-body");
+const leaderboardEmpty = document.querySelector("#leaderboard-empty");
+const leaderboardClear = document.querySelector("#leaderboard-clear");
 
 const practiceTypeNames = {
   convert: "แปลงฐาน",
@@ -479,7 +504,18 @@ const practiceState = {
   correct: 0,
   wrong: 0,
   streak: 0,
+  player: "",
+  remaining: 0,
+  elapsed: 0,
+  totalSeconds: 0,
+  timerId: null,
+  timedOut: false,
+  entryId: "",
 };
+
+const QUESTION_SECONDS = 300;
+const LEADERBOARD_KEY = "mathdev.leaderboard.v1";
+const PLAYER_KEY = "mathdev.player.v1";
 
 const baseDigitSets = {
   2: "0, 1",
@@ -645,6 +681,62 @@ function buildPracticeQuestion() {
   };
 }
 
+function formatClock(totalSeconds) {
+  const safe = Math.max(0, Math.floor(totalSeconds));
+  const minutes = String(Math.floor(safe / 60)).padStart(2, "0");
+  const seconds = String(safe % 60).padStart(2, "0");
+  return `${minutes}:${seconds}`;
+}
+
+function renderTimer() {
+  const remaining = practiceState.remaining;
+  practiceTimerValue.textContent = formatClock(remaining);
+  practiceTimerFill.style.width = `${(remaining / QUESTION_SECONDS) * 100}%`;
+  practiceTimerTrack.setAttribute("aria-valuenow", String(remaining));
+  practiceTimer.classList.toggle("is-warning", remaining <= 120 && remaining > 60);
+  practiceTimer.classList.toggle("is-danger", remaining <= 60 && remaining > 0);
+  practiceTimer.classList.toggle("is-expired", remaining <= 0);
+}
+
+function stopTimer() {
+  if (practiceState.timerId !== null) {
+    window.clearInterval(practiceState.timerId);
+    practiceState.timerId = null;
+  }
+}
+
+function startTimer() {
+  stopTimer();
+  practiceState.remaining = QUESTION_SECONDS;
+  practiceState.elapsed = 0;
+  practiceState.timedOut = false;
+  renderTimer();
+  practiceState.timerId = window.setInterval(() => {
+    practiceState.remaining -= 1;
+    practiceState.elapsed += 1;
+    renderTimer();
+    if (practiceState.remaining <= 0) {
+      stopTimer();
+      handleTimeUp();
+    }
+  }, 1000);
+}
+
+function handleTimeUp() {
+  if (practiceState.answered) return;
+  practiceState.timedOut = true;
+  practiceState.answered = true;
+  practiceState.wrong += 1;
+  practiceState.streak = 0;
+  updateScoreboard();
+  practiceFeedback.className = "feedback is-wrong";
+  practiceFeedback.innerHTML = `<strong>หมดเวลา</strong> คำตอบที่ถูกคือ <span class="mono">${practiceState.question.answer}</span>`;
+  practiceFeedback.hidden = false;
+  practiceNextButton.hidden = false;
+  renderPracticeSteps(practiceState.question);
+  practiceStepsCard.hidden = false;
+}
+
 function renderPracticeQuestion() {
   const question = practiceState.question;
   practiceTag.textContent = practiceTypeNames[question.type];
@@ -658,10 +750,14 @@ function renderPracticeQuestion() {
   practiceFeedback.className = "feedback";
   practiceStepsContent.innerHTML = "";
   practiceStepsSubtitle.textContent = "จะแสดงหลังตรวจคำตอบ";
+  practiceStepsCard.hidden = true;
+  practiceNextButton.hidden = true;
   practiceState.answered = false;
+  startTimer();
 }
 
 function newPracticeQuestion() {
+  practiceState.totalSeconds += practiceState.elapsed;
   practiceState.index += 1;
   practiceState.question = buildPracticeQuestion();
   renderPracticeQuestion();
@@ -762,6 +858,7 @@ function checkPracticeAnswer() {
 
   practiceError.hidden = true;
   practiceState.answered = true;
+  stopTimer();
   const expected = question.type === "convert"
     ? parseInteger(question.answer, question.targetBase).value
     : parseInteger(question.answer, question.base).value;
@@ -772,6 +869,7 @@ function checkPracticeAnswer() {
     practiceState.streak += 1;
     practiceFeedback.className = "feedback is-correct";
     practiceFeedback.innerHTML = `<strong>ถูกต้อง!</strong> คำตอบคือ <span class="mono">${question.answer}</span>`;
+    practiceNextButton.hidden = false;
   } else {
     practiceState.wrong += 1;
     practiceState.streak = 0;
@@ -782,7 +880,139 @@ function checkPracticeAnswer() {
   practiceFeedback.hidden = false;
   updateScoreboard();
   renderPracticeSteps(question);
+  practiceStepsCard.hidden = false;
 }
+
+function readLeaderboard() {
+  try {
+    const raw = window.localStorage.getItem(LEADERBOARD_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeLeaderboard(entries) {
+  try {
+    window.localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(entries));
+  } catch {
+    /* storage unavailable — คะแนนจะไม่ถูกบันทึก */
+  }
+}
+
+function saveScore() {
+  if (!practiceState.player || practiceState.correct === 0) return;
+  const entries = readLeaderboard();
+  const answered = practiceState.correct + practiceState.wrong;
+  const totalSeconds = practiceState.totalSeconds + practiceState.elapsed;
+  const record = {
+    id: practiceState.entryId || `e${Date.now()}${Math.random().toString(36).slice(2, 7)}`,
+    name: practiceState.player,
+    correct: practiceState.correct,
+    wrong: practiceState.wrong,
+    averageSeconds: answered > 0 ? Math.round(totalSeconds / answered) : 0,
+    at: Date.now(),
+  };
+  practiceState.entryId = record.id;
+
+  const existing = entries.findIndex((entry) => entry.id === record.id);
+  if (existing >= 0) entries[existing] = record;
+  else entries.push(record);
+
+  entries.sort((a, b) => b.correct - a.correct || a.averageSeconds - b.averageSeconds);
+  writeLeaderboard(entries.slice(0, 50));
+  renderLeaderboard();
+}
+
+function renderLeaderboard() {
+  const entries = readLeaderboard()
+    .sort((a, b) => b.correct - a.correct || a.averageSeconds - b.averageSeconds)
+    .slice(0, 10);
+
+  leaderboardEmpty.hidden = entries.length > 0;
+  leaderboardPodium.innerHTML = "";
+  leaderboardBody.innerHTML = "";
+
+  const medals = ["1", "2", "3"];
+  const classes = ["is-first", "is-second", "is-third"];
+  entries.slice(0, 3).forEach((entry, index) => {
+    const card = document.createElement("div");
+    card.className = `podium-card ${classes[index]}`;
+    card.innerHTML = `
+      <span class="podium-medal">${medals[index]}</span>
+      <span class="podium-name">${escapeHtml(entry.name)}</span>
+      <span class="podium-score">${entry.correct}</span>
+      <span class="podium-meta">ตอบถูก · เฉลี่ย ${formatClock(entry.averageSeconds)}</span>
+    `;
+    leaderboardPodium.append(card);
+  });
+
+  entries.forEach((entry, index) => {
+    const row = document.createElement("tr");
+    if (index < 3) row.className = "is-top";
+    row.innerHTML = `
+      <td class="rank-cell">${index + 1}</td>
+      <td class="name-cell">${escapeHtml(entry.name)}</td>
+      <td>${entry.correct}</td>
+      <td>${entry.wrong}</td>
+      <td>${formatClock(entry.averageSeconds)}</td>
+    `;
+    leaderboardBody.append(row);
+  });
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[character]);
+}
+
+function startPractice(name) {
+  practiceState.player = name;
+  practiceState.correct = 0;
+  practiceState.wrong = 0;
+  practiceState.streak = 0;
+  practiceState.index = 0;
+  practiceState.totalSeconds = 0;
+  practiceState.entryId = "";
+  practicePlayerName.textContent = name;
+  practiceGate.hidden = true;
+  practiceBody.hidden = false;
+  updateScoreboard();
+  newPracticeQuestion();
+}
+
+practiceNameForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const name = practiceNameInput.value.trim();
+  if (!name) {
+    practiceNameError.textContent = "กรุณาใส่ชื่อก่อนเริ่มฝึก";
+    practiceNameError.hidden = false;
+    return;
+  }
+  practiceNameError.hidden = true;
+  try {
+    window.localStorage.setItem(PLAYER_KEY, name);
+  } catch {
+    /* storage unavailable */
+  }
+  startPractice(name);
+});
+
+practiceChangeName.addEventListener("click", () => {
+  saveScore();
+  stopTimer();
+  practiceState.player = "";
+  practiceGate.hidden = false;
+  practiceBody.hidden = true;
+  practiceNameInput.value = "";
+  practiceNameInput.focus();
+});
 
 practiceForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -791,14 +1021,22 @@ practiceForm.addEventListener("submit", (event) => {
 
 practiceNewButton.addEventListener("click", newPracticeQuestion);
 practiceSkipButton.addEventListener("click", newPracticeQuestion);
+practiceNextButton.addEventListener("click", newPracticeQuestion);
 
 practiceResetButton.addEventListener("click", () => {
+  saveScore();
   practiceState.correct = 0;
   practiceState.wrong = 0;
   practiceState.streak = 0;
   practiceState.index = 0;
+  practiceState.totalSeconds = 0;
   updateScoreboard();
   newPracticeQuestion();
+});
+
+leaderboardClear.addEventListener("click", () => {
+  writeLeaderboard([]);
+  renderLeaderboard();
 });
 
 document.querySelectorAll('input[name="practice-type"]').forEach((input) => {
@@ -811,4 +1049,15 @@ practiceLevelSelect.addEventListener("change", newPracticeQuestion);
 document.querySelector("#footer-year").textContent = new Date().getFullYear();
 tryConvert();
 tryCalculate();
-newPracticeQuestion();
+renderLeaderboard();
+
+let savedPlayer = "";
+try {
+  savedPlayer = window.localStorage.getItem(PLAYER_KEY) || "";
+} catch {
+  savedPlayer = "";
+}
+if (savedPlayer) {
+  practiceNameInput.value = savedPlayer;
+}
+practiceNameInput.focus();

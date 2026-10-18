@@ -620,6 +620,199 @@ p {
   font-weight: 600;
 }
 
+.name-gate {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 26px 20px 24px;
+  border: 1px solid #eceaff;
+  border-radius: 12px;
+  background: linear-gradient(115deg, #f8f7ff 0%, #fbfaff 100%);
+  text-align: center;
+}
+
+.name-gate-icon {
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  margin-bottom: 6px;
+  border-radius: 14px;
+  background: #eeecff;
+  color: var(--purple);
+}
+
+.name-gate-icon svg {
+  width: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+.name-gate h3 {
+  margin: 0;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.name-gate > p {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 11px;
+}
+
+.name-gate form {
+  display: grid;
+  width: min(100%, 320px);
+  gap: 10px;
+  text-align: left;
+}
+
+.name-gate .input-wrap input {
+  padding-right: 14px;
+  font-size: 16px;
+}
+
+.name-gate .convert-button {
+  height: 45px;
+}
+
+.practice-body {
+  display: grid;
+  gap: 0;
+}
+
+.practice-player {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin-bottom: 16px;
+  padding: 9px 12px;
+  border: 1px solid #eef0f5;
+  border-radius: 10px;
+  background: #fcfcfe;
+}
+
+.player-name {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  align-items: baseline;
+  gap: 5px;
+  color: var(--ink);
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.player-name::before {
+  content: "ผู้ฝึก:";
+  flex: 0 0 auto;
+  color: #9a9eac;
+  font-weight: 400;
+}
+
+.player-name-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-change {
+  height: 30px;
+  flex: 0 0 auto;
+  padding: 0 11px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.timer {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid #eae8ff;
+  border-radius: 9px;
+  background: #fff;
+}
+
+.timer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.timer-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #9a9eac;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 10px;
+}
+
+.timer-label svg {
+  width: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+.timer-value {
+  color: var(--purple);
+  font-family: "Inter", monospace;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.timer-track {
+  height: 5px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #eeecff;
+}
+
+.timer-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--purple);
+  transition: width 1s linear, background 200ms ease;
+}
+
+.timer.is-warning .timer-value {
+  color: #c98a1f;
+}
+
+.timer.is-warning .timer-fill {
+  background: #e0a83c;
+}
+
+.timer.is-danger .timer-value {
+  color: #c34455;
+}
+
+.timer.is-danger .timer-fill {
+  background: #d9536a;
+}
+
+.timer.is-expired .timer-value {
+  color: #c34455;
+}
+
+.next-button {
+  margin-top: 9px;
+}
+
 .practice-setup {
   display: grid;
   gap: 16px;
@@ -950,6 +1143,174 @@ p {
   margin-left: auto;
 }
 
+.podium {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: end;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.podium:empty {
+  display: none;
+}
+
+.podium-card {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 14px 10px 12px;
+  border: 1px solid #eef0f5;
+  border-radius: 12px;
+  background: #fcfcfe;
+  text-align: center;
+}
+
+.podium-card.is-first {
+  border-color: #e6dcae;
+  background: linear-gradient(180deg, #fffdf3 0%, #fffefb 100%);
+}
+
+.podium-card.is-second {
+  border-color: #e2e5ec;
+  background: linear-gradient(180deg, #fafbfd 0%, #fff 100%);
+}
+
+.podium-card.is-third {
+  border-color: #f0e0d2;
+  background: linear-gradient(180deg, #fffaf6 0%, #fff 100%);
+}
+
+.podium-medal {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  background: #eeecff;
+  color: var(--purple);
+  font-family: "Inter", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.podium-card.is-first .podium-medal {
+  background: #fdf3d3;
+  color: #b58a12;
+}
+
+.podium-card.is-second .podium-medal {
+  background: #eef0f4;
+  color: #7c8494;
+}
+
+.podium-card.is-third .podium-medal {
+  background: #f8e9dd;
+  color: #a9713f;
+}
+
+.podium-name {
+  overflow: hidden;
+  max-width: 100%;
+  color: var(--ink);
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.podium-score {
+  color: var(--purple);
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.podium-meta {
+  color: #9a9eac;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 9px;
+}
+
+.leaderboard-table-wrap {
+  overflow-x: auto;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 12px;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #eef0f5;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.leaderboard-table th {
+  color: #9a9eac;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.leaderboard-table td {
+  color: #4e5366;
+}
+
+.leaderboard-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.leaderboard-table .rank-cell {
+  color: var(--purple);
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+}
+
+.leaderboard-table .name-cell {
+  overflow: hidden;
+  max-width: 150px;
+  color: var(--ink);
+  font-weight: 600;
+  text-overflow: ellipsis;
+}
+
+.leaderboard-table .is-top td {
+  background: #fbfaff;
+}
+
+.leaderboard-empty {
+  margin-top: 14px;
+  color: #9a9eac;
+  font-family: "IBM Plex Sans Thai", sans-serif;
+  font-size: 11px;
+  text-align: center;
+}
+
+.leaderboard-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.leaderboard-actions .ghost-button {
+  height: 36px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 .quick-guide {
   padding: 24px 1px 0;
 }
@@ -1260,6 +1621,31 @@ p {
 
   .practice-options {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .name-gate {
+    padding: 22px 15px 20px;
+  }
+
+  .podium {
+    gap: 7px;
+  }
+
+  .podium-card {
+    padding: 11px 7px 10px;
+  }
+
+  .podium-name {
+    font-size: 11px;
+  }
+
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 9px 6px;
+  }
+
+  .leaderboard-table .name-cell {
+    max-width: 90px;
   }
 
   .practice-filters {
