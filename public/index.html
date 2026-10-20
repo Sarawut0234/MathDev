@@ -2,13 +2,21 @@
 <html lang="th">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
     <meta
       name="description"
       content="เครื่องมือแปลงและคำนวณเลขฐาน 2 ถึง 36 บวก ลบ คูณ หาร พร้อมแสดงวิธีคิดทีละขั้นตอน"
     />
-    <meta name="theme-color" content="#f7f8fc" />
+    <meta name="theme-color" content="#f4f5fb" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="เลขฐาน" />
+    <meta name="format-detection" content="telephone=no" />
     <title>แปลงและคำนวณเลขฐาน — Number Base Converter</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,12 +24,12 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/mobile.css" />
     <script src="/slides-data.js" defer></script>
     <script src="/app.js" defer></script>
   </head>
   <body>
-    <main class="page-shell">
-      <header class="topbar">
+    <main class="page-shell">      <header class="topbar">
         <a class="brand" href="/" aria-label="แปลงเลขฐาน หน้าแรก">
           <span class="brand-mark" aria-hidden="true">10</span>
           <span>เลขฐาน<span class="brand-dot">.</span></span>
@@ -214,7 +222,7 @@
         </section>
       </section>
 
-      <section class="steps-card convert-panel" data-panel="convert" aria-labelledby="steps-title">
+      <section class="steps-card convert-panel" id="steps-card" data-panel="convert" aria-labelledby="steps-title">
         <div class="steps-heading">
           <span class="steps-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M3.5 6h.01M3.5 12h.01M3.5 18h.01" /></svg>
@@ -224,6 +232,9 @@
             <p id="steps-subtitle">แปลงจากฐาน 2 เป็นฐาน 10</p>
           </div>
           <span class="steps-tag">ทีละขั้นตอน</span>
+          <button class="steps-toggle" type="button" aria-expanded="true" aria-controls="steps-content" aria-label="ย่อหรือขยายวิธีคิดการแปลง">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5" /></svg>
+          </button>
         </div>
         <div class="steps-content" id="steps-content"></div>
       </section>
@@ -337,6 +348,9 @@
             <p id="calc-steps-subtitle">บวกในฐาน 2</p>
           </div>
           <span class="steps-tag">ทีละขั้นตอน</span>
+          <button class="steps-toggle" type="button" aria-expanded="true" aria-controls="calc-steps-content" aria-label="ย่อหรือขยายวิธีคิดการคำนวณ">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5" /></svg>
+          </button>
         </div>
         <div class="steps-content" id="calc-steps-content"></div>
       </section>
@@ -814,10 +828,14 @@
             <p id="practice-steps-subtitle">จะแสดงหลังตรวจคำตอบ</p>
           </div>
           <span class="steps-tag">ทีละขั้นตอน</span>
+          <button class="steps-toggle" type="button" aria-expanded="true" aria-controls="practice-steps-content" aria-label="ย่อหรือขยายวิธีคิดของโจทย์">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5" /></svg>
+          </button>
         </div>
         <div class="steps-content" id="practice-steps-content"></div>
       </section>
       </div>
+
 
       <section class="quick-guide" aria-label="ข้อมูลเกี่ยวกับเลขฐาน">
         <div class="guide-heading">
@@ -845,6 +863,31 @@
         <span>เลขฐาน<span class="brand-dot">.</span> <span id="footer-year"></span></span>
       </footer>
     </main>
+
+    <nav class="app-dock" aria-label="เมนูหลัก">
+      <div class="app-dock-inner">
+        <button class="dock-tab is-active" type="button" data-tab="convert" aria-current="page" aria-label="แปลงฐาน">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7h11m0 0-3-3m3 3-3 3M16 13H5m0 0 3 3m-3-3 3-3" /></svg>
+          <span>แปลงฐาน</span>
+        </button>
+        <button class="dock-tab" type="button" data-tab="calc" aria-label="คำนวณ">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3v14M3 6h6M12 6h5M12 10h5M12 14h5" /></svg>
+          <span>คำนวณ</span>
+        </button>
+        <button class="dock-tab" type="button" data-tab="practice" aria-label="แบบฝึกหัด">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.5 12 8l4.5.4-3.4 3 1 4.4-4.1-2.4-4.1 2.4 1-4.4-3.4-3L8 8z" /></svg>
+          <span>แบบฝึกหัด</span>
+        </button>
+        <button class="dock-tab" type="button" data-tab="slides" aria-label="สไลด์">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5.5h14v9H3zM8 18h4M10 14.5V18" /></svg>
+          <span>สไลด์</span>
+        </button>
+        <button class="dock-tab" type="button" data-tab="leaderboard" aria-label="จัดอันดับ">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 16V9m6 7V4m6 12v-5" /></svg>
+          <span>จัดอันดับ</span>
+        </button>
+      </div>
+    </nav>
 
     <div class="lightbox" id="slides-lightbox" hidden role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
       <div class="lightbox-scrim" data-lightbox-close></div>

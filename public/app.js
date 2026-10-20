@@ -410,6 +410,15 @@ function activateTab(name) {
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-selected", String(isActive));
   });
+  document.querySelectorAll(".dock-tab").forEach((button) => {
+    const isActive = button.dataset.tab === name;
+    button.classList.toggle("is-active", isActive);
+    if (isActive) {
+      button.setAttribute("aria-current", "page");
+    } else {
+      button.removeAttribute("aria-current");
+    }
+  });
   document.querySelectorAll("[data-panel]").forEach((panel) => {
     panel.hidden = panel.dataset.panel !== name;
   });
@@ -422,6 +431,47 @@ function activateTab(name) {
 document.querySelectorAll(".tab-button").forEach((button) => {
   button.addEventListener("click", () => activateTab(button.dataset.tab));
 });
+
+document.querySelectorAll(".dock-tab").forEach((button) => {
+  button.addEventListener("click", () => activateTab(button.dataset.tab));
+});
+
+/* ---------- มือถือ: ย่อ/ขยายการ์ด "วิธีคิด" แบบพับได้ ---------- */
+
+const stepsToggles = [...document.querySelectorAll(".steps-toggle")];
+const stepsCards = stepsToggles.map((toggle) => {
+  const card = toggle.closest(".steps-card");
+  return { toggle, card, body: card ? card.querySelector(".steps-content") : null };
+});
+const compactLayoutQuery = window.matchMedia("(max-width: 900px)");
+let stepsCollapsed = false;
+
+function paintStepsToggles() {
+  stepsCards.forEach(({ toggle, card, body }) => {
+    if (!card || !body) return;
+    const expanded = !stepsCollapsed;
+    toggle.setAttribute("aria-expanded", String(expanded));
+    body.hidden = !expanded;
+    card.classList.toggle("is-collapsed", !expanded);
+  });
+}
+
+stepsToggles.forEach((toggle) => {
+  toggle.addEventListener("click", () => {
+    stepsCollapsed = !stepsCollapsed;
+    paintStepsToggles();
+  });
+});
+
+/* บนเดสก์ท็อปไม่มีปุ่มพับ การ์ดวิธีคิดจึงต้องแสดงเนื้อหาเสมอ */
+compactLayoutQuery.addEventListener("change", (event) => {
+  if (!event.matches && stepsCollapsed) {
+    stepsCollapsed = false;
+    paintStepsToggles();
+  }
+});
+
+paintStepsToggles();
 
 calcForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -1891,6 +1941,12 @@ document.querySelector("#footer-year").textContent = new Date().getFullYear();
 tryConvert();
 tryCalculate();
 renderLeaderboard();
+
+if ("serviceWorker" in navigator && window.isSecureContext) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  });
+}
 
 let savedPlayer = "";
 try {

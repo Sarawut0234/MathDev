@@ -1,0 +1,19 @@
+{
+  "name": "เลขฐาน — แปลงและคำนวณเลขฐาน",
+  "short_name": "เลขฐาน",
+  "description": "แปลง บวก ลบ คูณ หาร เลขฐาน 2–36 พร้อมวิธีคิดทีละขั้นตอน สไลด์บทเรียน และแบบฝึกหัด",
+  "lang": "th",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f5fb",
+  "theme_color": "#f4f5fb",
+  "categories": ["education", "utilities"],
+  "icons": [
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

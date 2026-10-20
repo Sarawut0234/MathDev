@@ -1,0 +1,1290 @@
+/* ==========================================================================
+   เลย์เอาต์มือถือแบบแอพ + พื้นผิวกระจก (iOS glass)
+   โหลดต่อจาก base.css — ทับเฉพาะช่วงหน้าจอมือถือ/แท็บเล็ต
+   ========================================================================== */
+
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.62);
+  --glass-bg-strong: rgba(255, 255, 255, 0.8);
+  --glass-line: rgba(255, 255, 255, 0.72);
+  --glass-stroke: rgba(120, 124, 150, 0.16);
+  --glass-inner: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  --glass-shadow: 0 12px 32px rgba(31, 35, 63, 0.08);
+  --dock-height: 62px;
+  --dock-space: calc(var(--dock-height) + 18px + env(safe-area-inset-bottom, 0px));
+  --glass-blur: blur(22px) saturate(1.7);
+}
+
+/* ---------- ปุ่ม/แถบที่ใช้เฉพาะมือถือ (ซ่อนบนเดสก์ท็อป) ---------- */
+
+.app-dock,
+.steps-toggle {
+  display: none;
+}
+
+/* ---------- จอ ≤900px: เปลี่ยนเป็นแอพมือถือเต็มรูปแบบ ---------- */
+
+@media (max-width: 900px) {
+  header,
+  nav,
+  footer,
+  main {
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  body {
+    background:
+      radial-gradient(125% 78% at 10% -8%, #e9e3ff 0%, rgba(233, 227, 255, 0) 58%),
+      radial-gradient(95% 62% at 102% 2%, #ddedff 0%, rgba(221, 237, 255, 0) 52%),
+      radial-gradient(90% 55% at 46% 108%, #ffe4f4 0%, rgba(255, 228, 244, 0) 58%),
+      #f4f5fb;
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: rgba(98, 84, 232, 0.18);
+  }
+
+  .page-shell {
+    width: min(100% - 32px, 560px);
+    padding-bottom: var(--dock-space);
+  }
+
+  /* ---------- แถบหัวเรื่อง: การ์ดกระจกลอย ---------- */
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    height: auto;
+    padding: calc(9px + env(safe-area-inset-top, 0px)) 2px 9px;
+    border: 0;
+    border-radius: 0;
+    background: linear-gradient(rgba(244, 245, 251, 0.86) 55%, rgba(244, 245, 251, 0));
+    box-shadow: none;
+    -webkit-backdrop-filter: blur(16px) saturate(1.6);
+    backdrop-filter: blur(16px) saturate(1.6);
+  }
+
+  .brand {
+    gap: 9px;
+    font-size: 16px;
+  }
+
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 11px;
+    font-size: 12px;
+    background: linear-gradient(155deg, #7a6cf0 0%, #5b4ddc 100%);
+    box-shadow: 0 6px 16px rgba(98, 84, 232, 0.32), var(--glass-inner);
+  }
+
+  .topbar-note {
+    gap: 7px;
+    font-size: 10px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    box-shadow: 0 0 0 3px rgba(80, 201, 154, 0.18);
+  }
+
+  /* ---------- ส่วนแนะนำ: ย่อให้กระชับแบบหัวแอพ ---------- */
+
+  .hero {
+    display: block;
+    padding: 8px 4px 14px;
+    text-align: left;
+  }
+
+  .hero-text {
+    min-width: 0;
+  }
+
+  .eyebrow {
+    display: none;
+  }
+
+  .hero h1 {
+    margin-top: 0;
+    font-size: clamp(19px, 5.4vw, 23px);
+    letter-spacing: -0.4px;
+    line-height: 1.5;
+  }
+
+  .mobile-break {
+    display: none;
+  }
+
+  .hero-copy {
+    max-width: 100%;
+    margin-top: 4px;
+    font-size: 11.5px;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  /* ---------- การ์ดหลัก: กระจกฝ้าโปร่งแสง ---------- */
+
+  .panels {
+    gap: 14px;
+  }
+
+  .converter-card,
+  .steps-card {
+    padding: 16px 15px 15px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 22px;
+    background: var(--glass-bg);
+    box-shadow: var(--glass-inner), var(--glass-shadow);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  .card-heading {
+    margin-bottom: 15px;
+  }
+
+  .card-heading h2 {
+    font-size: 15.5px;
+  }
+
+  .card-heading p {
+    margin-top: 3px;
+    font-size: 10.5px;
+    line-height: 1.5;
+  }
+
+  .card-heading > div {
+    min-width: 0;
+  }
+
+  .precision-badge {
+    flex: 0 0 auto;
+    padding: 6px 9px;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.66);
+    font-size: 9px;
+    box-shadow: var(--glass-inner);
+  }
+
+  /* ---------- ฟอร์ม ---------- */
+
+  .field-label {
+    font-size: 11px;
+    color: #565c6e;
+  }
+
+  .input-wrap,
+  .select-wrap {
+    height: 50px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: var(--glass-inner);
+  }
+
+  .input-wrap:focus-within,
+  .select-wrap:focus-within {
+    border-color: rgba(98, 84, 232, 0.5);
+    box-shadow: 0 0 0 4px rgba(98, 84, 232, 0.12), var(--glass-inner);
+  }
+
+  .input-wrap input {
+    padding: 0 66px 0 13px;
+    font-size: 16px;
+  }
+
+  .input-suffix {
+    right: 12px;
+    font-size: 10px;
+  }
+
+  .select-wrap select {
+    padding: 0 34px 0 13px;
+    font-size: 16px;
+  }
+
+  .select-wrap > svg {
+    right: 12px;
+    width: 15px;
+  }
+
+  .conversion-row {
+    grid-template-columns: minmax(0, 1fr) 46px;
+    grid-template-areas:
+      "input swap"
+      "select select";
+    gap: 12px 8px;
+  }
+
+  .conversion-row > .field-group:first-child {
+    grid-area: input;
+  }
+
+  .conversion-row > .swap-button {
+    grid-area: swap;
+  }
+
+  .conversion-row > .field-group:last-child {
+    grid-area: select;
+  }
+
+  .swap-button {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 4px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: var(--glass-inner);
+  }
+
+  .swap-button svg {
+    width: 19px;
+  }
+
+  .calc-operand-row {
+    grid-template-columns: minmax(0, 1fr) 104px minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .operator-wrap select {
+    padding: 0 26px 0 10px;
+    font-size: 16px;
+  }
+
+  .base-controls {
+    min-height: 0;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 2px;
+  }
+
+  .base-range {
+    margin-bottom: 14px;
+  }
+
+  .base-picker {
+    gap: 7px;
+    font-size: 11px;
+  }
+
+  .number-select {
+    height: 38px;
+    gap: 5px;
+    padding: 0 10px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.72);
+    font-size: 11px;
+    box-shadow: var(--glass-inner);
+  }
+
+  .number-select input {
+    width: 34px;
+    font-size: 16px;
+  }
+
+  .base-range {
+    flex-basis: 100%;
+    margin-left: 0;
+    font-size: 10px;
+    text-align: left;
+  }
+
+  .error-message {
+    font-size: 12px;
+  }
+
+  .convert-button {
+    height: 50px;
+    gap: 8px;
+    border-radius: 16px;
+    background: linear-gradient(150deg, #6f60ec 0%, #5344d6 100%);
+    box-shadow: 0 10px 24px rgba(98, 84, 232, 0.28);
+    font-size: 14px;
+  }
+
+  .convert-button:hover {
+    background: linear-gradient(150deg, #6555e6 0%, #4a3cca 100%);
+  }
+
+  .convert-button:active {
+    transform: scale(0.985);
+  }
+
+  .ghost-button {
+    height: 50px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: var(--glass-inner);
+    font-size: 13px;
+  }
+
+  /* ---------- ผลลัพธ์ ---------- */
+
+  .result-panel {
+    margin-top: 14px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.86);
+    border-radius: 18px;
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.78) 0%, rgba(240, 238, 255, 0.72) 100%);
+    box-shadow: var(--glass-inner), 0 8px 22px rgba(31, 35, 63, 0.05);
+  }
+
+  .result-label {
+    font-size: 11.5px;
+  }
+
+  .copy-button {
+    padding: 7px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: var(--glass-inner);
+    font-size: 11px;
+  }
+
+  .result-value {
+    margin-top: 8px;
+    font-size: clamp(28px, 9vw, 38px);
+  }
+
+  .result-meta {
+    font-size: 10.5px;
+  }
+
+  /* ---------- วิธีคิด: การ์ดแบบพับได้ ---------- */
+
+  .steps-card {
+    padding: 16px 15px 15px;
+  }
+
+  .steps-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 13px;
+    background: rgba(98, 84, 232, 0.1);
+  }
+
+  .steps-heading {
+    gap: 10px;
+  }
+
+  .steps-heading h2 {
+    font-size: 15px;
+  }
+
+  .steps-heading p {
+    font-size: 10.5px;
+    line-height: 1.5;
+  }
+
+  .steps-tag {
+    flex: 0 0 auto;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 9px;
+  }
+
+  .steps-toggle {
+    display: grid;
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    margin-left: 8px;
+    place-items: center;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.68);
+    color: #6b7086;
+    cursor: pointer;
+    box-shadow: var(--glass-inner);
+    transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+  }
+
+  .steps-toggle svg {
+    width: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .steps-toggle[aria-expanded="false"] svg {
+    transform: rotate(-90deg);
+  }
+
+  .steps-toggle:active {
+    transform: scale(0.94);
+  }
+
+  .steps-heading .steps-tag {
+    margin-left: auto;
+  }
+
+  .steps-content {
+    margin: 14px 0 0;
+    padding: 14px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.66);
+    font-size: 12.5px;
+    line-height: 1.75;
+    box-shadow: var(--glass-inner);
+  }
+
+  .steps-content[hidden] {
+    display: none;
+  }
+
+  .steps-card.is-collapsed {
+    padding-bottom: 15px;
+  }
+
+  .formula {
+    font-size: 12px;
+  }
+
+  .mini-table,
+  .kmap-table {
+    font-size: 12px;
+  }
+
+  .detail-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  /* ---------- แบบฝึกหัด ---------- */
+
+  .name-gate {
+    padding: 24px 16px 22px;
+    border: 1px solid rgba(255, 255, 255, 0.86);
+    border-radius: 20px;
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.78) 0%, rgba(240, 238, 255, 0.72) 100%);
+    box-shadow: var(--glass-inner);
+  }
+
+  .name-gate-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 17px;
+    background: rgba(98, 84, 232, 0.1);
+  }
+
+  .name-gate h3 {
+    font-size: 17px;
+  }
+
+  .name-gate > p {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .name-gate form {
+    width: 100%;
+    gap: 11px;
+  }
+
+  .practice-player {
+    gap: 8px 10px;
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.62);
+    box-shadow: var(--glass-inner);
+  }
+
+  .player-name {
+    font-size: 12px;
+  }
+
+  .set-progress-value {
+    font-size: 12px;
+  }
+
+  .set-progress-track {
+    height: 7px;
+    background: rgba(98, 84, 232, 0.14);
+  }
+
+  .timer {
+    margin-top: 12px;
+    padding: 12px 13px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.62);
+    box-shadow: var(--glass-inner);
+  }
+
+  .timer-head {
+    margin-bottom: 9px;
+  }
+
+  .timer-label {
+    font-size: 11px;
+  }
+
+  .timer-value {
+    font-size: 17px;
+  }
+
+  .timer-track {
+    height: 7px;
+  }
+
+  .question-card {
+    margin-top: 12px;
+    padding: 16px 15px 17px;
+    border: 1px solid rgba(255, 255, 255, 0.86);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: var(--glass-inner), 0 8px 22px rgba(31, 35, 63, 0.05);
+  }
+
+  .question-tag {
+    font-size: 9.5px;
+  }
+
+  .question-count {
+    font-size: 11px;
+  }
+
+  .question-text {
+    margin-top: 12px;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .question-hint {
+    font-size: 11.5px;
+  }
+
+  .question-detail p {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1px;
+    font-size: 12px;
+  }
+
+  .detail-label {
+    font-size: 10.5px;
+  }
+
+  .practice-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .practice-option {
+    padding: 13px 12px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: var(--glass-inner);
+  }
+
+  .practice-option strong {
+    font-size: 12.5px;
+  }
+
+  .practice-option small {
+    font-size: 10px;
+  }
+
+  .practice-group legend {
+    font-size: 11px;
+  }
+
+  .practice-select select {
+    font-size: 16px;
+  }
+
+  .practice-filters {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 11px;
+  }
+
+  .practice-actions {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+    margin-top: 12px;
+  }
+
+  .practice-actions .ghost-button {
+    height: 46px;
+  }
+
+  .next-button {
+    margin-top: 10px;
+  }
+
+  .feedback {
+    margin-top: 13px;
+    padding: 13px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+  }
+
+  .scoreboard {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+    margin-top: 16px;
+    padding-top: 15px;
+  }
+
+  .score-item {
+    min-width: 0;
+    padding: 11px 10px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.66);
+    box-shadow: var(--glass-inner);
+  }
+
+  .score-value {
+    font-size: 21px;
+  }
+
+  .score-label {
+    font-size: 10px;
+    line-height: 1.35;
+  }
+
+  .score-reset {
+    grid-column: 1 / -1;
+    width: 100%;
+    height: 44px;
+    margin: 2px 0 0;
+  }
+
+  .set-summary {
+    margin-top: 16px;
+    padding: 22px 16px 20px;
+    border: 1px solid rgba(255, 255, 255, 0.86);
+    border-radius: 22px;
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.8) 0%, rgba(238, 235, 255, 0.76) 100%);
+    box-shadow: var(--glass-inner), var(--glass-shadow);
+  }
+
+  .set-summary h3 {
+    font-size: 17px;
+  }
+
+  .set-summary-name {
+    font-size: 12px;
+  }
+
+  .set-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    margin-top: 16px;
+  }
+
+  .summary-item {
+    padding: 13px 12px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: var(--glass-inner);
+  }
+
+  .summary-value {
+    font-size: 19px;
+  }
+
+  .summary-label {
+    font-size: 10px;
+  }
+
+  .set-summary-note {
+    font-size: 12px;
+  }
+
+  .set-summary-actions {
+    gap: 9px;
+    margin-top: 16px;
+  }
+
+  .set-summary-actions .convert-button,
+  .set-summary-actions .ghost-button {
+    width: 100%;
+  }
+
+  /* ---------- สไลด์ ---------- */
+
+  .slides-chapters {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+    margin-bottom: 16px;
+  }
+
+  .slides-chapter {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 9px;
+    padding: 13px 14px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.66);
+    box-shadow: var(--glass-inner);
+  }
+
+  .slides-chapter.is-active {
+    border-color: rgba(98, 84, 232, 0.42);
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.85) 0%, rgba(238, 235, 255, 0.8) 100%);
+  }
+
+  .slides-chapter-label {
+    font-size: 11px;
+  }
+
+  .slides-chapter-title {
+    font-size: 12.5px;
+    white-space: normal;
+  }
+
+  .slides-chapter-count {
+    font-size: 10.5px;
+  }
+
+  .slides-stage {
+    grid-template-columns: 40px minmax(0, 1fr) 40px;
+    gap: 8px;
+  }
+
+  .slides-nav {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: var(--glass-inner);
+  }
+
+  .slides-nav svg {
+    width: 18px;
+  }
+
+  .slides-frame {
+    border: 1px solid var(--glass-stroke);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: var(--glass-inner);
+  }
+
+  .slides-open img {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .slides-caption {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    padding: 11px 13px;
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .slides-caption-title {
+    font-size: 12px;
+    white-space: normal;
+  }
+
+  .slides-caption-meta {
+    font-size: 10px;
+  }
+
+  .slides-progress {
+    margin-top: 15px;
+  }
+
+  .slides-progress-head {
+    font-size: 11px;
+  }
+
+  .slides-progress-hint {
+    display: none;
+  }
+
+  .slides-progress-track {
+    height: 6px;
+    background: rgba(98, 84, 232, 0.14);
+  }
+
+  .slides-thumbs {
+    gap: 8px;
+    margin-top: 15px;
+    padding-bottom: 4px;
+  }
+
+  .slides-thumb {
+    width: 84px;
+    border: 1.5px solid var(--glass-stroke);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.75);
+    box-shadow: var(--glass-inner);
+  }
+
+  .slides-thumb span {
+    font-size: 9.5px;
+  }
+
+  .slides-note {
+    margin-top: 15px;
+    padding: 14px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.66);
+    font-size: 12px;
+    line-height: 1.7;
+    box-shadow: var(--glass-inner);
+  }
+
+  /* ---------- สไลด์เต็มจอ ---------- */
+
+  .lightbox {
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .lightbox-scrim {
+    background: rgba(12, 14, 26, 0.72);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    backdrop-filter: blur(16px) saturate(1.4);
+  }
+
+  .lightbox-inner {
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 10px;
+    height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  }
+
+  .lightbox-head {
+    padding: 0 2px;
+  }
+
+  .lightbox-title {
+    white-space: normal;
+    font-size: 13px;
+  }
+
+  .lightbox-sub {
+    font-size: 10px;
+  }
+
+  .lightbox-close {
+    width: 38px;
+    height: 38px;
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.14);
+  }
+
+  .lightbox-stage {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "img img"
+      "prev next";
+    gap: 10px;
+  }
+
+  .lightbox-image {
+    grid-area: img;
+    border-radius: 16px;
+  }
+
+  .lightbox-nav {
+    position: static;
+    width: 100%;
+    height: 42px;
+    border-radius: 14px;
+    border-color: rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .lightbox-nav svg {
+    width: 19px;
+  }
+
+  #lightbox-prev {
+    grid-area: prev;
+  }
+
+  #lightbox-next {
+    grid-area: next;
+  }
+
+  /* รวมแถวเลือกบทและภาพย่อไว้ในแถบเดียวที่เลื่อนแนวนอนได้ */
+  .lightbox-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding-bottom: 2px;
+  }
+
+  .lightbox-chapters {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    gap: 5px;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .lightbox-chapter {
+    padding: 7px 11px;
+    border-radius: 999px;
+    white-space: nowrap;
+    font-size: 10px;
+  }
+
+  .lightbox-hint {
+    display: none;
+  }
+
+  .lightbox-thumbs {
+    flex: 1 1 auto;
+    gap: 6px;
+    min-width: 0;
+    padding-bottom: 0;
+  }
+
+  .lightbox-thumb {
+    width: 56px;
+    border-radius: 9px;
+  }
+
+  /* ---------- จัดอันดับ ---------- */
+
+  .podium {
+    gap: 8px;
+    padding: 26px 2px 0;
+    margin-bottom: 18px;
+  }
+
+  .podium-card {
+    padding: 15px 7px 11px;
+    border: 1px solid rgba(255, 255, 255, 0.88);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: var(--glass-inner), 0 10px 26px rgba(31, 35, 63, 0.08);
+  }
+
+  .podium-avatar {
+    width: 38px;
+    height: 38px;
+    font-size: 15px;
+  }
+
+  .podium-name {
+    font-size: 11.5px;
+  }
+
+  .podium-score {
+    font-size: 21px;
+  }
+
+  .podium-spot--1 .podium-score {
+    font-size: 26px;
+  }
+
+  .podium-meta {
+    font-size: 9px;
+    line-height: 1.35;
+    white-space: normal;
+  }
+
+  .leaderboard-table-wrap {
+    border: 1px solid var(--glass-stroke);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.68);
+    box-shadow: var(--glass-inner);
+  }
+
+  .leaderboard-table {
+    font-size: 12px;
+  }
+
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 12px 8px;
+  }
+
+  .leaderboard-table th {
+    font-size: 10px;
+  }
+
+  .leaderboard-table .name-cell {
+    max-width: 96px;
+  }
+
+  .leaderboard-empty {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  /* ---------- การ์ดเลขฐานยอดนิยม + ท้ายหน้า ---------- */
+
+  .quick-guide {
+    margin-top: 18px;
+    padding: 0 2px;
+  }
+
+  .guide-heading {
+    margin-bottom: 10px;
+  }
+
+  .guide-heading h2 {
+    font-size: 12.5px;
+  }
+
+  .base-chips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  .base-chip {
+    gap: 9px;
+    padding: 11px;
+    border: 1px solid var(--glass-stroke);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.66);
+    box-shadow: var(--glass-inner);
+  }
+
+  .chip-number {
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+    background: rgba(98, 84, 232, 0.1);
+    font-size: 11px;
+  }
+
+  .base-chip strong {
+    font-size: 11px;
+    white-space: normal;
+  }
+
+  .base-chip small {
+    font-size: 9px;
+    white-space: normal;
+  }
+
+  .footer {
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 20px;
+    padding: 16px 0 8px;
+    border-top: 1px solid rgba(120, 124, 150, 0.14);
+    font-size: 10px;
+    text-align: center;
+  }
+
+  /* ---------- แถบเมนูลอยด้านล่าง (แบบแอพมือถือ) ---------- */
+
+  .app-dock {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 80;
+    display: block;
+    padding: 0 12px calc(env(safe-area-inset-bottom, 0px) + 8px);
+    pointer-events: none;
+  }
+
+  .app-dock-inner {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 2px;
+    max-width: 480px;
+    height: var(--dock-height);
+    margin: 0 auto;
+    padding: 7px 8px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.58);
+    box-shadow: var(--glass-inner), 0 18px 44px rgba(31, 35, 63, 0.18);
+    -webkit-backdrop-filter: blur(26px) saturate(1.9);
+    backdrop-filter: blur(26px) saturate(1.9);
+    pointer-events: auto;
+  }
+
+  .dock-tab {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto;
+    align-content: center;
+    justify-items: center;
+    gap: 3px;
+    min-width: 0;
+    padding: 4px 2px;
+    border: 0;
+    border-radius: 17px;
+    background: transparent;
+    color: #7d8296;
+    cursor: pointer;
+    font-family: "IBM Plex Sans Thai", sans-serif;
+    font-size: 9.5px;
+    font-weight: 600;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 180ms ease, background 180ms ease, transform 180ms ease;
+  }
+
+  .dock-tab svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.7;
+    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .dock-tab span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .dock-tab:active svg {
+    transform: scale(0.9);
+  }
+
+  .dock-tab.is-active {
+    background: linear-gradient(160deg, rgba(122, 108, 240, 0.16) 0%, rgba(98, 84, 232, 0.1) 100%);
+    color: var(--purple-dark);
+    font-weight: 700;
+  }
+
+  .dock-tab.is-active svg {
+    transform: translateY(-1px);
+  }
+
+  .dock-tab.is-active::after {
+    content: "";
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--purple);
+    transform: translateX(-50%);
+  }
+
+  /* ปุ่มสลับแท็บเดิมซ่อน เพราะย้ายมาไว้ในแถบลอยแล้ว */
+  .tabs {
+    display: none;
+  }
+}
+
+/* ---------- จอเล็กมาก: กันข้อความล้น ---------- */
+
+@media (max-width: 380px) {
+  .page-shell {
+    width: calc(100% - 24px);
+  }
+
+  .hero h1 {
+    font-size: clamp(18px, 5.2vw, 20px);
+  }
+
+  .topbar-note-text {
+    display: none;
+  }
+
+  .card-heading p {
+    font-size: 10px;
+  }
+
+  .precision-badge {
+    padding: 5px 8px;
+    font-size: 8.5px;
+  }
+
+  .calc-operand-row {
+    grid-template-columns: minmax(0, 1fr) 88px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .operator-wrap select {
+    padding: 0 22px 0 8px;
+  }
+
+  .dock-tab {
+    font-size: 9px;
+  }
+
+  .dock-tab svg {
+    width: 21px;
+    height: 21px;
+  }
+}
+
+@media (max-width: 300px) {
+  .page-shell {
+    width: calc(100% - 20px);
+  }
+
+  .dock-tab span {
+    display: none;
+  }
+
+  .steps-tag {
+    display: none;
+  }
+
+  .app-dock-inner {
+    height: 56px;
+  }
+
+  .conversion-row {
+    grid-template-columns: minmax(0, 1fr) 42px;
+  }
+
+  .calc-operand-row {
+    grid-template-columns: minmax(0, 1fr) 74px minmax(0, 1fr);
+    gap: 5px;
+  }
+
+  .base-chips {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .practice-options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .scoreboard {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .score-label {
+    font-size: 9px;
+  }
+
+}
+
+/* ---------- เคารพผู้ใช้ที่ปิดอนิเมชัน ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .dock-tab,
+  .dock-tab svg,
+  .steps-toggle,
+  .steps-toggle svg {
+    transition: none;
+  }
+}
