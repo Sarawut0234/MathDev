@@ -1,9 +1,10 @@
 /* Service worker แบบเบา: ให้ติดตั้งเป็นแอพได้ และเปิดใช้ซ้ำได้แม้ไม่มีเน็ต */
-const CACHE_NAME = "number-base-v1";
+const CACHE_NAME = "number-base-v2";
 const APP_SHELL = [
   "/",
   "/style.css",
   "/mobile.css",
+  "/press.css",
   "/slides-data.js",
   "/app.js",
   "/manifest.webmanifest",

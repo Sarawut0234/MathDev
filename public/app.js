@@ -1937,6 +1937,95 @@ practiceLevelSelect.addEventListener("change", () => {
   practiceNewButton.focus();
 });
 
+/* ---------- ตอบสนองทุกปุ่มเมื่อกด ----------
+   :active ของ CSS ไม่ทำงานบน iOS จึงขับสถานะกดด้วย pointer events แทน
+   ใช้ event delegation เพื่อให้ครอบคลุมปุ่มที่สร้างขึ้นภายหลังด้วย */
+
+const PRESSABLE_SELECTOR = [
+  ".convert-button",
+  ".tab-button",
+  ".dock-tab",
+  ".steps-toggle",
+  ".ghost-button",
+  ".copy-button",
+  ".swap-button",
+  ".base-chip",
+  ".practice-option",
+  ".slides-open",
+  ".slides-chapter",
+  ".slides-nav",
+  ".slides-thumb",
+  ".lightbox-close",
+  ".lightbox-nav",
+  ".lightbox-chapter",
+  ".lightbox-thumb",
+  ".link-button",
+].join(", ");
+
+/* ผูกสถานะกดกับ pointer แต่ละตัว เพื่อรองรับการกดค้างหลายจุดพร้อมกัน */
+const pressedPointers = new Map();
+
+function pressableFrom(target) {
+  if (!(target instanceof Element)) return null;
+  const pressable = target.closest(PRESSABLE_SELECTOR);
+  if (!pressable || pressable.matches(":disabled")) return null;
+  return pressable;
+}
+
+function beginPress(pressable, pointerId) {
+  if (!pressable) return;
+  pressable.classList.remove("did-press");
+  pressable.classList.add("is-pressed");
+  pressedPointers.set(pointerId, pressable);
+}
+
+/* ring = true เมื่อปล่อยบนปุ่มเดิม (ไม่ใช่กรณีลากนิ้วออกหรือเลื่อนจอ) */
+function endPress(pointerId, { ring = true } = {}) {
+  const target = pressedPointers.get(pointerId);
+  pressedPointers.delete(pointerId);
+  if (!target) return;
+  target.classList.remove("is-pressed");
+  if (!ring) return;
+  target.classList.add("did-press");
+  window.setTimeout(() => target.classList.remove("did-press"), 480);
+}
+
+function endAllPresses() {
+  [...pressedPointers.keys()].forEach((pointerId) => endPress(pointerId, { ring: false }));
+}
+
+document.addEventListener("pointerdown", (event) => {
+  if (event.button !== 0) return;
+  beginPress(pressableFrom(event.target), event.pointerId);
+});
+
+document.addEventListener("pointerup", (event) => {
+  const tracked = pressedPointers.get(event.pointerId);
+  const released = pressableFrom(event.target);
+  endPress(event.pointerId, { ring: Boolean(tracked) && tracked === released });
+});
+
+/* ลากนิ้วออกจากปุ่มหรือเลื่อนจอ: ยกเลิกสถานะกดโดยไม่แสดงวงแหวน */
+document.addEventListener("pointercancel", (event) => {
+  endPress(event.pointerId, { ring: false });
+});
+
+/* สลับแท็บ/หน้าต่างหรือปุ่มถูกปิดกลางทาง: กันสถานะกดค้าง */
+window.addEventListener("blur", endAllPresses);
+
+/* ---------- ตอบสนองปุ่มด้วยคีย์บอร์ด (Enter/Space) ---------- */
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  if (event.repeat) return;
+  beginPress(pressableFrom(event.target), "keyboard");
+});
+
+document.addEventListener("keyup", (event) => {
+  if (event.key !== "Enter" && event.key !== " ") return;
+  endPress("keyboard");
+});
+
 document.querySelector("#footer-year").textContent = new Date().getFullYear();
 tryConvert();
 tryCalculate();

@@ -1,0 +1,303 @@
+/* ==========================================================================
+   การตอบสนองเมื่อกดปุ่ม (press feedback) — โหลดท้ายสุดของทุกไฟล์ CSS
+   ใช้ได้ทั้งเมาส์ สัมผัส และคีย์บอร์ด (คลาส .is-pressed / .did-press จาก app.js)
+   กดค้าง = ปุ่มยุบลง · ปล่อย = มีวงแหวนกระเพื่อม
+   ========================================================================== */
+
+/* ---------- ให้ทุกปุ่มที่กดได้เปลี่ยนสถานะได้นุ่มนวล ---------- */
+
+.tab-button,
+.dock-tab,
+.steps-toggle,
+.ghost-button,
+.copy-button,
+.swap-button,
+.base-chip,
+.practice-option,
+.slides-open,
+.slides-chapter,
+.slides-nav,
+.slides-thumb,
+.lightbox-close,
+.lightbox-nav,
+.lightbox-chapter,
+.lightbox-thumb,
+.link-button {
+  transition:
+    background 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease,
+    box-shadow 150ms ease,
+    transform 140ms ease,
+    filter 140ms ease;
+}
+
+/* ปิดไฮไลต์เทา ๆ ของเบราว์เซอร์ เพื่อให้เห็นผลตอบสนองของเราแทน */
+.tab-button,
+.dock-tab,
+.steps-toggle,
+.ghost-button,
+.copy-button,
+.swap-button,
+.base-chip,
+.practice-option,
+.slides-open,
+.slides-chapter,
+.slides-nav,
+.slides-thumb,
+.lightbox-close,
+.lightbox-nav,
+.lightbox-chapter,
+.lightbox-thumb,
+.link-button,
+.convert-button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- ปุ่มหลักสีม่วง ---------- */
+
+.convert-button {
+  transition:
+    background 150ms ease,
+    box-shadow 150ms ease,
+    transform 140ms ease,
+    filter 140ms ease;
+}
+
+.convert-button:active,
+.convert-button.is-pressed {
+  transform: scale(0.985);
+  filter: brightness(0.93);
+  box-shadow:
+    0 4px 12px rgba(98, 84, 232, 0.2),
+    inset 0 2px 6px rgba(24, 16, 74, 0.26);
+}
+
+/* ---------- แท็บด้านบนและแถบลอยล่าง ---------- */
+
+.tab-button:active,
+.tab-button.is-pressed {
+  transform: scale(0.96);
+}
+
+.tab-button:active:not(.is-active),
+.tab-button.is-pressed:not(.is-active) {
+  background: var(--purple-soft);
+  color: var(--purple);
+}
+
+.tab-button.is-active:active,
+.tab-button.is-active.is-pressed {
+  filter: brightness(0.92);
+}
+
+.dock-tab:active,
+.dock-tab.is-pressed {
+  transform: scale(0.93);
+}
+
+.steps-toggle:active,
+.steps-toggle.is-pressed {
+  transform: scale(0.88);
+  background: var(--purple-soft);
+  color: var(--purple);
+}
+
+/* ---------- ปุ่มพื้นขาว ---------- */
+
+.ghost-button:active,
+.ghost-button.is-pressed {
+  transform: scale(0.97);
+  border-color: #b9b2f7;
+  background: var(--purple-soft);
+  color: var(--purple);
+}
+
+.copy-button:active,
+.copy-button.is-pressed {
+  transform: scale(0.95);
+  background: #eeecff;
+  color: var(--purple);
+}
+
+.swap-button:active,
+.swap-button.is-pressed {
+  transform: rotate(180deg) scale(0.92);
+  background: var(--purple-soft);
+}
+
+.base-chip:active,
+.base-chip.is-pressed {
+  transform: scale(0.97);
+  border-color: #b9b2f7;
+  background: var(--purple-soft);
+}
+
+.practice-option:active,
+.practice-option.is-pressed {
+  transform: scale(0.985);
+  border-color: #b9b2f7;
+  background: #faf9ff;
+}
+
+.link-button:active,
+.link-button.is-pressed {
+  color: var(--purple-dark);
+  opacity: 0.7;
+}
+
+/* ---------- สไลด์ ---------- */
+
+.slides-open:active,
+.slides-open.is-pressed {
+  transform: scale(0.99);
+  filter: brightness(0.97);
+}
+
+.slides-open:active .slides-open-hint,
+.slides-open.is-pressed .slides-open-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slides-chapter:active,
+.slides-chapter.is-pressed {
+  transform: scale(0.97);
+  border-color: #b9b2f7;
+  background: #faf9ff;
+}
+
+.slides-nav:active:not(:disabled),
+.slides-nav.is-pressed:not(:disabled) {
+  transform: scale(0.9);
+  border-color: #b9b2f7;
+  background: #faf9ff;
+  color: var(--purple);
+}
+
+.slides-thumb:active,
+.slides-thumb.is-pressed {
+  transform: scale(0.95);
+  border-color: #b9b2f7;
+}
+
+/* ---------- หน้าต่างสไลด์เต็มจอ (พื้นเข้ม) ---------- */
+
+.lightbox-close:active,
+.lightbox-close.is-pressed {
+  transform: rotate(90deg) scale(0.9);
+  background: rgba(255, 255, 255, 0.26);
+}
+
+.lightbox-nav:active:not(:disabled),
+.lightbox-nav.is-pressed:not(:disabled) {
+  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.lightbox-chapter:active,
+.lightbox-chapter.is-pressed {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.lightbox-thumb:active,
+.lightbox-thumb.is-pressed {
+  transform: scale(0.94);
+  border-color: rgba(255, 255, 255, 0.65);
+}
+
+/* ---------- วงแหวนกระเพื่อมตอนปล่อยปุ่ม ---------- */
+
+@keyframes press-ring {
+  from {
+    box-shadow: 0 0 0 0 rgba(98, 84, 232, 0.32);
+  }
+  to {
+    box-shadow: 0 0 0 10px rgba(98, 84, 232, 0);
+  }
+}
+
+@keyframes press-ring-light {
+  from {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.42);
+  }
+  to {
+    box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+  }
+}
+
+.did-press {
+  animation: press-ring 460ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lightbox .did-press {
+  animation-name: press-ring-light;
+}
+
+/* ---------- เคารพผู้ใช้ที่ปิดอนิเมชัน: ยังเห็นสีเปลี่ยน แต่ไม่มีการยุบ/กระเพื่อม ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .convert-button,
+  .tab-button,
+  .dock-tab,
+  .steps-toggle,
+  .ghost-button,
+  .copy-button,
+  .swap-button,
+  .base-chip,
+  .practice-option,
+  .slides-open,
+  .slides-chapter,
+  .slides-nav,
+  .slides-thumb,
+  .lightbox-close,
+  .lightbox-nav,
+  .lightbox-chapter,
+  .lightbox-thumb,
+  .link-button {
+    transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+  }
+
+  .convert-button:active,
+  .convert-button.is-pressed,
+  .tab-button:active,
+  .tab-button.is-pressed,
+  .dock-tab:active,
+  .dock-tab.is-pressed,
+  .steps-toggle:active,
+  .steps-toggle.is-pressed,
+  .ghost-button:active,
+  .ghost-button.is-pressed,
+  .copy-button:active,
+  .copy-button.is-pressed,
+  .swap-button:active,
+  .swap-button.is-pressed,
+  .base-chip:active,
+  .base-chip.is-pressed,
+  .practice-option:active,
+  .practice-option.is-pressed,
+  .slides-open:active,
+  .slides-open.is-pressed,
+  .slides-chapter:active,
+  .slides-chapter.is-pressed,
+  .slides-nav:active:not(:disabled),
+  .slides-nav.is-pressed:not(:disabled),
+  .slides-thumb:active,
+  .slides-thumb.is-pressed,
+  .lightbox-close:active,
+  .lightbox-close.is-pressed,
+  .lightbox-nav:active:not(:disabled),
+  .lightbox-nav.is-pressed:not(:disabled),
+  .lightbox-chapter:active,
+  .lightbox-chapter.is-pressed,
+  .lightbox-thumb:active,
+  .lightbox-thumb.is-pressed {
+    transform: none;
+  }
+
+  .did-press {
+    animation: none;
+  }
+}
