@@ -1288,3 +1288,249 @@
     transition: none;
   }
 }
+
+/* ==========================================================================
+   จอ ≥901px: พื้นผิวกระจกแบบเดียวกับมือถือ
+   ใช้ตัวแปร --glass-* ชุดเดิม แต่คงเลย์เอาต์เดสก์ท็อป (แถบแท็บ + hero 2 คอลัมน์)
+   ========================================================================== */
+
+@media (min-width: 901px) {
+  /* ---------- พื้นหลังไล่สีแบบติดจอ ---------- */
+
+  body {
+    background:
+      radial-gradient(52% 40% at 6% -8%, #e9e3ff 0%, rgba(233, 227, 255, 0) 62%),
+      radial-gradient(44% 36% at 100% -4%, #ddedff 0%, rgba(221, 237, 255, 0) 58%),
+      radial-gradient(58% 44% at 52% 108%, #ffe4f4 0%, rgba(255, 228, 244, 0) 60%),
+      radial-gradient(40% 34% at 88% 78%, #e6f4ff 0%, rgba(230, 244, 255, 0) 60%),
+      #f4f5fb;
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: rgba(98, 84, 232, 0.18);
+  }
+
+  /* ---------- การ์ดหลัก วิธีคิด โจทย์ และด่านใส่ชื่อ ---------- */
+
+  .converter-card,
+  .steps-card {
+    border: 1px solid var(--glass-stroke);
+    background: var(--glass-bg);
+    box-shadow: var(--glass-inner), var(--glass-shadow);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  .result-panel,
+  .name-gate,
+  .question-card,
+  .set-summary {
+    border: 1px solid rgba(255, 255, 255, 0.86);
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.78) 0%, rgba(240, 238, 255, 0.72) 100%);
+    box-shadow: var(--glass-inner), 0 10px 30px rgba(31, 35, 63, 0.07);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  /* ---------- แถบหัวเรื่องและแถบแท็บแบบลอย ---------- */
+
+  .topbar {
+    border: 1px solid var(--glass-stroke);
+    background: var(--glass-bg-strong);
+    box-shadow: var(--glass-inner), var(--glass-shadow);
+  }
+
+  .tabs {
+    border: 1px solid var(--glass-stroke);
+    background: var(--glass-bg-strong);
+    box-shadow: var(--glass-inner), var(--glass-shadow);
+  }
+
+  /* ---------- ช่องกรอกและปุ่ม ---------- */
+
+  .input-wrap,
+  .select-wrap {
+    border: 1px solid var(--glass-stroke);
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: var(--glass-inner);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  .input-wrap:focus-within,
+  .select-wrap:focus-within {
+    border-color: rgba(98, 84, 232, 0.5);
+    box-shadow: 0 0 0 4px rgba(98, 84, 232, 0.12), var(--glass-inner);
+  }
+
+  .swap-button,
+  .number-select {
+    border: 1px solid var(--glass-stroke);
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: var(--glass-inner);
+  }
+
+  .ghost-button {
+    border: 1px solid var(--glass-stroke);
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: var(--glass-inner);
+  }
+
+  .copy-button {
+    border: 1px solid var(--glass-stroke);
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: var(--glass-inner);
+  }
+
+  .convert-button {
+    box-shadow: 0 12px 26px rgba(98, 84, 232, 0.24), var(--glass-inner);
+  }
+
+  /* ---------- ป้าย สถิติ และการ์ดย่อยที่ใช้พื้นผิวกระจก ---------- */
+
+  .precision-badge {
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.66);
+    box-shadow: var(--glass-inner);
+  }
+
+  .hero-stat,
+  .base-chip,
+  .practice-player,
+  .timer,
+  .score-item,
+  .summary-item,
+  .slides-chapter,
+  .slides-thumb,
+  .slides-note,
+  .slides-nav,
+  .slides-frame,
+  .leaderboard-table-wrap {
+    border: 1px solid var(--glass-stroke);
+    background: rgba(255, 255, 255, 0.66);
+    box-shadow: var(--glass-inner);
+  }
+
+  /* เฉพาะพื้นผิวขนาดใหญ่ที่ใช้เบลอจริง เพื่อไม่ให้มีเลเยอร์เบลอมากเกินไป */
+  .slides-note,
+  .slides-frame,
+  .leaderboard-table-wrap {
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  .hero-stat,
+  .base-chip,
+  .slides-nav {
+    background: rgba(255, 255, 255, 0.72);
+  }
+
+  .slides-caption {
+    border-top: 1px solid var(--glass-stroke);
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .slides-open,
+  .slides-open img {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .steps-content {
+    border: 1px solid var(--glass-stroke);
+    background: rgba(255, 255, 255, 0.66);
+    box-shadow: var(--glass-inner);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  .chip-number,
+  .steps-icon,
+  .name-gate-icon {
+    background: rgba(98, 84, 232, 0.1);
+    box-shadow: var(--glass-inner);
+  }
+
+  .practice-option {
+    border: 1px solid var(--glass-stroke);
+    background: rgba(255, 255, 255, 0.72);
+    box-shadow: var(--glass-inner);
+  }
+
+  .practice-option:hover {
+    border-color: rgba(98, 84, 232, 0.34);
+  }
+
+  .practice-option:has(input:checked) {
+    border-color: rgba(98, 84, 232, 0.42);
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.85) 0%, rgba(238, 235, 255, 0.8) 100%);
+  }
+
+  .practice-option::before {
+    border-color: rgba(120, 124, 150, 0.34);
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .slides-chapter.is-active {
+    border-color: rgba(98, 84, 232, 0.42);
+    background: linear-gradient(140deg, rgba(255, 255, 255, 0.85) 0%, rgba(238, 235, 255, 0.8) 100%);
+  }
+
+  .slides-thumb.is-active {
+    border-color: rgba(98, 84, 232, 0.6);
+  }
+
+  .feedback.is-correct {
+    border: 1px solid rgba(80, 201, 154, 0.34);
+    background: rgba(242, 251, 247, 0.82);
+    box-shadow: var(--glass-inner);
+  }
+
+  .feedback.is-wrong {
+    border: 1px solid rgba(233, 138, 152, 0.34);
+    background: rgba(254, 246, 247, 0.82);
+    box-shadow: var(--glass-inner);
+  }
+
+  .podium-card {
+    border: 1px solid rgba(255, 255, 255, 0.86);
+    background: linear-gradient(165deg, rgba(255, 255, 255, 0.82) 0%, rgba(240, 238, 255, 0.76) 100%);
+    box-shadow: var(--glass-inner), 0 12px 30px rgba(31, 35, 63, 0.1);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+  }
+
+  /* การ์ดอันดับ 1 คงสีทองไว้ แต่เพิ่มเส้นไฮไลต์ให้เข้าชุดกับพื้นผิวกระจก */
+  .podium-spot--1 .podium-card {
+    box-shadow:
+      var(--glass-inner),
+      0 0 0 1px rgba(255, 255, 255, 0.7) inset,
+      0 14px 34px rgba(214, 158, 32, 0.34),
+      0 0 26px rgba(255, 196, 66, 0.42);
+  }
+
+  /* ---------- แถบความคืบหน้าและเส้นคั่น ---------- */
+
+  .timer-track,
+  .slides-progress-track,
+  .set-progress-track {
+    background: rgba(98, 84, 232, 0.14);
+  }
+
+  .scoreboard {
+    border-top: 1px solid rgba(120, 124, 150, 0.16);
+  }
+
+  .leaderboard-table th,
+  .leaderboard-table td {
+    border-bottom: 1px solid rgba(120, 124, 150, 0.12);
+  }
+
+  .leaderboard-table .is-top td {
+    background: rgba(98, 84, 232, 0.05);
+  }
+
+  .footer {
+    border-top: 1px solid rgba(120, 124, 150, 0.14);
+  }
+}
